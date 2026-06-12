@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2.1</title>
+  <title>出海工作资源助手 V2.2</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -63,7 +63,7 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2.1 · 正式推广优化版</span>
+    <span class="badge">出海工作资源助手 V2.2 · 正式推广优化版</span>
     <h1>海外工作信息整理、防骗检测、求职资料生成、正规资源对接</h1>
     <p class="sub">面向想了解海外工作机会的中国求职者。平台提供岗位信息整理、风险提示、简历/话术工具和咨询留资；不承诺录用，不保证签证，不收押金，不做非法劳务。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
@@ -118,6 +118,11 @@
     <div class="card" style="margin-top:16px">
       <h2>平台边界和免责声明</h2>
       <div class="warning">本平台只提供信息整理、风险提示、求职资料生成和咨询线索收集；不承诺安排工作，不保证签证通过，不收取押金，不发布黑工、非法滞留、虚假高薪岗位。涉及出国劳务、签证、合同、收费，必须以正规持牌机构和官方信息为准。</div>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card"><h3>避坑提醒 1</h3><p>高薪不等于真实到手。一定要核实税前税后、工作时间、加班费、扣费项目。</p></div>
+        <div class="card"><h3>避坑提醒 2</h3><p>不要提前交大额押金，不要把护照原件交给陌生中介或不明公司保管。</p></div>
+        <div class="card"><h3>避坑提醒 3</h3><p>合同主体、签证类型、雇主名称、费用明细必须能核实，不清楚就不要急着转账。</p></div>
+      </div>
     </div>
   </section>
 
@@ -192,6 +197,17 @@
         <div>
           <label>想去国家</label><input id="aCountry" placeholder="新加坡 / 日本 / 中东 / 澳大利亚"/>
           <label>工种/技能</label><input id="aSkill" placeholder="焊工、电工、司机、厨师、机械维修等"/>
+          <label>证书情况</label>
+          <select id="aCertificate">
+            <option>无证书</option>
+            <option>焊工证</option>
+            <option>电工证</option>
+            <option>叉车证</option>
+            <option>驾驶证</option>
+            <option>厨师证</option>
+            <option>多项证书</option>
+            <option>其他证书</option>
+          </select>
           <label>期望工资</label><input id="aSalary" placeholder="例如：12000-18000/月"/>
           <label>是否接受工地/矿山/工厂</label><select id="aAcceptSite"><option>可以接受</option><option>只接受工厂</option><option>只接受城市岗位</option><option>需要再了解</option></select>
           <label>工作经验</label><textarea id="aExp" placeholder="简单说明工作经验、证书、语言能力"></textarea>
@@ -199,7 +215,7 @@
         </div>
       </div>
       <button id="submitBtn" onclick="saveApply()">提交申请</button>
-      <p class="small">提交代表你同意平台用于咨询跟进。平台不收押金，不保证录用和签证。</p>
+      <p class="small">隐私提示：你的信息仅用于海外工作咨询初步沟通，不会在页面公开展示。平台不收押金，不保证录用和签证。</p>
     </div>
   </section>
 
@@ -228,6 +244,7 @@
         <div><label>国家</label><input id="filterCountry" oninput="renderApplies()" placeholder="中东/新加坡/日本"/></div>
         <div><label>工种</label><input id="filterSkill" oninput="renderApplies()" placeholder="焊工/电工/司机"/></div>
         <div><label>客户状态</label><select id="filterStatus" onchange="renderApplies()"><option value="">全部</option><option>未联系</option><option>已联系</option><option>有意向</option><option>已推荐</option><option>无效</option></select></div>
+        <div><label>客户标签</label><select id="filterTag" onchange="renderApplies()"><option value="">全部</option><option>高意向</option><option>需跟进</option><option>资料不全</option><option>待推荐</option><option>无效</option></select></div>
       </div>
       <h3>咨询申请列表</h3>
       <div id="applyList"></div>
@@ -236,7 +253,7 @@
 </main>
 
 <footer>
-  出海工作资源助手 V2.1 · 正式推广版 / 隐藏后台 / 客户状态跟进
+  出海工作资源助手 V2.2 · 客户跟进增强版 / 一键复制 / 客户标签
   <br>
   <span class="admin-mini" onclick="openAdmin()">管理入口</span>
 </footer>
@@ -251,9 +268,10 @@ const ADMIN_PASSWORD = "123456";
 const TABLE_NAME = "applications";
 
 /* 客服联系方式：改成你自己的 */
-const WECHAT_ID = "znm1108";
-const WHATSAPP_URL = "javascript:void(0)";
-const TELEGRAM_URL = "https://t.me/zleisheng";
+const WECHAT_ID = "请填写你的微信号";
+const WHATSAPP_URL = "https://wa.me/8613800000000";
+const TELEGRAM_URL = "https://t.me/yourname";
+
 let sb = null;
 let cloudReady = false;
 
@@ -378,8 +396,8 @@ function genResume(){
 function renderGuides(){guideList.innerHTML=GUIDES.map(g=>`<div class="card"><h2>${g.title}</h2><p>${g.body}</p></div>`).join("");}
 
 function collectApply(){
-  const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
-  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.1",status:"未联系",admin_note:""};
+  const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n证书情况：${aCertificate.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
+  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.2",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value};
 }
 async function saveApply(){
   const item=collectApply(); if(!item.name||!item.contact){alert("请填写姓名和联系方式");return;}
@@ -417,18 +435,54 @@ function statusTag(s){
   return `<span class="tag ${map[s]||""}">${s||"未联系"}</span>`;
 }
 function renderApplies(){
-  const c=(filterCountry?.value||"").toLowerCase(), s=(filterSkill?.value||"").toLowerCase(), st=(filterStatus?.value||"");
-  const data=applies.filter(a=>(!c||String(a.country||"").toLowerCase().includes(c))&&(!s||String(a.skill||"").toLowerCase().includes(s))&&(!st||(a.status||"未联系")===st));
-  applyList.innerHTML=data.map((a,i)=>`<div class="job"><h3>${a.name||""} · ${a.skill||"未填工种"}</h3><span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}${statusTag(a.status||"未联系")}<p><b>时间：</b>${fmtTime(a.created_at)}</p><p><b>联系：</b>${a.contact||""}</p><p><b>年龄/所在地：</b>${a.age||""} / ${a.city||""}</p><p><b>经验：</b>${String(a.experience||a.exp||"").replace(/\n/g,"<br>")}</p><p><b>客户备注：</b>${a.note||""}</p><p><b>跟进备注：</b>${a.admin_note||""}</p>${a.id?`<div class="toolbar"><select id="status_${a.id}"><option ${sel(a.status,"未联系")}>未联系</option><option ${sel(a.status,"已联系")}>已联系</option><option ${sel(a.status,"有意向")}>有意向</option><option ${sel(a.status,"已推荐")}>已推荐</option><option ${sel(a.status,"无效")}>无效</option></select><input id="note_${a.id}" placeholder="跟进备注" value="${escapeAttr(a.admin_note||"")}"><button class="gold" onclick="updateApplyStatus('${a.id}')">保存跟进</button><button class="danger" onclick="deleteCloudApply('${a.id}')">删除</button></div>`:""}</div>`).join("")||"<p class='small'>暂无申请记录。</p>";
+  const c=(filterCountry?.value||"").toLowerCase(), s=(filterSkill?.value||"").toLowerCase(), st=(filterStatus?.value||""), tg=(filterTag?.value||"");
+  const data=applies.filter(a=>(!c||String(a.country||"").toLowerCase().includes(c))&&(!s||String(a.skill||"").toLowerCase().includes(s))&&(!st||(a.status||"未联系")===st)&&(!tg||(a.customer_tag||"需跟进")===tg));
+  applyList.innerHTML=data.map((a,i)=>{
+    const expTxt = String(a.experience||a.exp||"");
+    return `<div class="job"><h3>${a.name||""} · ${a.skill||"未填工种"}</h3>
+      <span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}${statusTag(a.status||"未联系")}<span class="tag purple">${a.customer_tag||"需跟进"}</span>
+      <p><b>时间：</b>${fmtTime(a.created_at)}</p>
+      <p><b>联系：</b>${a.contact||""}</p>
+      <p><b>年龄/所在地：</b>${a.age||""} / ${a.city||""}</p>
+      <p><b>经验：</b>${expTxt.replace(/\n/g,"<br>")}</p>
+      <p><b>客户备注：</b>${a.note||""}</p>
+      <p><b>跟进备注：</b>${a.admin_note||""}</p>
+      ${a.id?`<div class="toolbar">
+        <button class="secondary" onclick="copyCustomerInfo('${a.id}')">复制客户信息</button>
+        <button class="green" onclick="copyContactScript('${a.id}')">复制联系话术</button>
+        <select id="status_${a.id}"><option ${sel(a.status,"未联系")}>未联系</option><option ${sel(a.status,"已联系")}>已联系</option><option ${sel(a.status,"有意向")}>有意向</option><option ${sel(a.status,"已推荐")}>已推荐</option><option ${sel(a.status,"无效")}>无效</option></select>
+        <select id="tag_${a.id}"><option ${sel(a.customer_tag,"高意向")}>高意向</option><option ${sel(a.customer_tag,"需跟进")}>需跟进</option><option ${sel(a.customer_tag,"资料不全")}>资料不全</option><option ${sel(a.customer_tag,"待推荐")}>待推荐</option><option ${sel(a.customer_tag,"无效")}>无效</option></select>
+        <input id="note_${a.id}" placeholder="跟进备注" value="${escapeAttr(a.admin_note||"")}">
+        <button class="gold" onclick="updateApplyStatus('${a.id}')">保存跟进</button><button class="danger" onclick="deleteCloudApply('${a.id}')">删除</button>
+      </div>`:""}</div>`;
+  }).join("")||"<p class='small'>暂无申请记录。</p>";
 }
 function sel(a,b){return (a||"未联系")===b?"selected":""}
 function escapeAttr(v){return String(v).replace(/"/g,"&quot;")}
 function fmtTime(t){try{return t?new Date(t).toLocaleString():""}catch(e){return t||""}}
+
+function getApplyById(id){return applies.find(x=>String(x.id)===String(id)) || {};}
+function buildCustomerInfo(a){
+  return `【海外工作咨询客户】\n姓名：${a.name||""}\n联系方式：${a.contact||""}\n年龄：${a.age||""}\n所在地：${a.city||""}\n想去国家：${a.country||""}\n工种/技能：${a.skill||""}\n护照：${a.passport||""}\n经验：${String(a.experience||"").replace(/\n/g,"；")}\n客户备注：${a.note||""}\n跟进状态：${a.status||"未联系"}\n客户标签：${a.customer_tag||"需跟进"}\n跟进备注：${a.admin_note||""}`;
+}
+function copyCustomerInfo(id){
+  const a=getApplyById(id);
+  const txt=buildCustomerInfo(a);
+  navigator.clipboard?.writeText(txt);
+  alert("已复制客户信息");
+}
+function copyContactScript(id){
+  const a=getApplyById(id);
+  const txt=`你好，我看到你提交了海外工作咨询信息。你想了解的是${a.country||"海外"}方向，工种是${a.skill||"相关岗位"}。我先帮你初步判断一下岗位方向和风险点。请你再确认一下：\n1）现在是否有护照？\n2）有没有相关证书？\n3）工作经验几年？\n4）期望工资大概多少？\n5）能不能接受工地/矿山/工厂岗位？\n提醒：正规流程需要核实合同、签证类型、雇主信息和费用明细，不建议提前交押金或交护照原件。`;
+  navigator.clipboard?.writeText(txt);
+  alert("已复制联系话术");
+}
 async function updateApplyStatus(id){
   if(!cloudReady||!sb){alert("云端未连接");return;}
   const status=document.getElementById("status_"+id).value;
+  const customer_tag=document.getElementById("tag_"+id).value;
   const admin_note=document.getElementById("note_"+id).value;
-  const {error}=await sb.from(TABLE_NAME).update({status,admin_note}).eq("id",id);
+  const {error}=await sb.from(TABLE_NAME).update({status,customer_tag,admin_note}).eq("id",id);
   if(error)alert("保存失败："+error.message);else{alert("已保存跟进状态");loadCloudApplies();}
 }
 async function deleteCloudApply(id){
@@ -440,19 +494,19 @@ async function deleteCloudApply(id){
 async function syncLocalToCloud(){
   if(!cloudReady||!sb){alert("Supabase 未配置，不能补传");return;}
   if(!localFallback.length){alert("没有本地兜底记录");return;}
-  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.1-local-sync",status:x.status||"未联系",admin_note:x.admin_note||""}));
+  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.2-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||""}));
   const {error}=await sb.from(TABLE_NAME).insert(rows);
   if(error){alert("补传失败："+error.message);return;}
   localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");alert("补传成功，本地兜底记录已清空");loadCloudApplies();
 }
 function clearLocalApplies(){if(confirm("确定清空本机兜底记录？不会删除云端数据。")){localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");if(!cloudReady){applies=[];renderApplies();}updateStats();}}
-function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.1"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
+function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.2"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
 function csvEscape(v){v=String(v??"");return '"'+v.replace(/"/g,'""').replace(/\n/g,' ')+'"';}
 function exportCSV(){
-  const headers=["时间","姓名","联系方式","年龄","所在地","护照","想去国家","工种技能","工作经验","客户备注","跟进状态","跟进备注","来源"];
-  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.age,a.city,a.passport,a.country,a.skill,a.experience||a.exp,a.note,a.status||"未联系",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
+  const headers=["时间","姓名","联系方式","年龄","所在地","护照","想去国家","工种技能","证书","工作经验","客户备注","跟进状态","客户标签","跟进备注","来源"];
+  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.age,a.city,a.passport,a.country,a.skill,a.certificate||"",a.experience||a.exp,a.note,a.status||"未联系",a.customer_tag||"需跟进",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
   const csv="\ufeff"+[headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.1.csv";a.click();
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.2.csv";a.click();
 }
 
 initContacts();
