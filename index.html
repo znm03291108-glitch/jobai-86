@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2.3</title>
+  <title>出海工作资源助手 V2.4</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -63,6 +63,10 @@
     .mini-card{background:rgba(21,120,255,.08);border:1px solid rgba(21,120,255,.18);border-radius:14px;padding:12px}
     .scam{border-left:4px solid #df3f45}
     .check{border-left:4px solid #14945b}
+    .price{font-size:28px;font-weight:900;color:#fff;margin:8px 0}
+    .service-card{position:relative;overflow:hidden}
+    .service-card:before{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;background:rgba(21,120,255,.14);border-radius:50%}
+    .pay-note{background:rgba(20,148,91,.12);border:1px solid rgba(20,148,91,.24);color:#d9ffe8;border-radius:14px;padding:12px;margin-top:12px}
     code{background:rgba(255,255,255,.08);padding:2px 5px;border-radius:6px}
     @media(max-width:880px){.grid,.grid3{grid-template-columns:1fr}.kpi{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}}
   </style>
@@ -70,7 +74,7 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2.3 · 正式推广优化版</span>
+    <span class="badge">出海工作资源助手 V2.4 · 正式推广优化版</span>
     <h1>海外工作信息服务平台：岗位方向、国家指南、避坑知识、求职资料</h1>
     <p class="sub">面向焊工、电工、司机、厨师、机械维修、工程项目人员等，提供海外岗位信息整理、招聘风险识别、国家流程指南、求职资料生成和正规资源咨询。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
@@ -80,6 +84,7 @@
       <button class="secondary" onclick="showTab('risk')">防骗检测</button>
       <button class="secondary" onclick="showTab('resume')">AI简历</button>
       <button class="secondary" onclick="showTab('guides')">国家指南</button>
+      <button class="secondary" onclick="showTab('services')">付费服务</button>
       <button class="secondary" onclick="showTab('apply')">免费咨询</button>
     </div>
   </div>
@@ -98,6 +103,7 @@
       <div class="card"><h2>最新岗位信息</h2><p>首页直接展示热门岗位方向：新加坡厨师、中东焊工、非洲矿山司机、日本食品加工、澳洲农场工等。</p><button onclick="document.getElementById('latestJobs').scrollIntoView({behavior:'smooth'})">查看最新岗位</button></div>
       <div class="card"><h2>出国避坑知识</h2><p>先看清高薪、押金、护照、合同、签证、费用等关键风险，再决定是否继续沟通。</p><button onclick="document.getElementById('avoidTips').scrollIntoView({behavior:'smooth'})">查看避坑知识</button></div>
       <div class="card"><h2>免费初步咨询</h2><p>提交国家、工种、证书、工资预期和工作经验，后台可统一跟进和标记客户状态。</p><button onclick="showTab('apply')">提交咨询</button></div>
+      <div class="card"><h2>资料服务</h2><p>提供简历、求职信、联系话术、风险报告等资料整理服务，不卖岗位、不保签证。</p><button onclick="showTab('services')">查看付费服务</button></div>
     </div>
 
     <div id="latestJobs" class="card platform-section">
@@ -234,6 +240,64 @@
     <div class="grid3" id="guideList"></div>
   </section>
 
+
+  <section id="services" class="tab hide">
+    <div class="card">
+      <h2>付费服务入口</h2>
+      <p class="sub">说明：以下服务只做信息整理、求职资料制作、风险提示和咨询沟通，不承诺录用，不保证签证，不收押金，不代办非法劳务。</p>
+      <div class="grid3" style="margin-top:14px">
+        <div class="card service-card">
+          <h2>基础资料包</h2>
+          <div class="price">¥19.9</div>
+          <p>适合先了解方向的求职者。</p>
+          <p>包含：中文简历初稿、岗位方向建议、出国前准备清单。</p>
+          <button onclick="selectService('基础资料包', '19.9')">咨询购买</button>
+        </div>
+        <div class="card service-card">
+          <h2>标准求职资料包</h2>
+          <div class="price">¥49</div>
+          <p>适合准备正式联系岗位资源的人。</p>
+          <p>包含：中文简历、英文简历、求职信、WhatsApp 联系话术。</p>
+          <button onclick="selectService('标准求职资料包', '49')">咨询购买</button>
+        </div>
+        <div class="card service-card">
+          <h2>岗位风险报告</h2>
+          <div class="price">¥29.9</div>
+          <p>适合已经看到招聘信息、想先判断风险的人。</p>
+          <p>包含：高薪风险、押金风险、签证风险、护照风险、合同核实清单。</p>
+          <button onclick="selectService('岗位风险报告', '29.9')">咨询购买</button>
+        </div>
+        <div class="card service-card">
+          <h2>完整出海求职资料包</h2>
+          <div class="price">¥99</div>
+          <p>适合想系统准备资料的人。</p>
+          <p>包含：中英文简历、求职信、联系话术、国家方向建议、材料清单、防骗清单。</p>
+          <button onclick="selectService('完整出海求职资料包', '99')">咨询购买</button>
+        </div>
+        <div class="card service-card">
+          <h2>一对一方向分析</h2>
+          <div class="price">¥199</div>
+          <p>适合情况复杂、需要单独梳理的人。</p>
+          <p>包含：个人情况分析、国家/岗位方向建议、风险点梳理、资料整理建议。</p>
+          <button onclick="selectService('一对一方向分析', '199')">咨询购买</button>
+        </div>
+        <div class="card service-card">
+          <h2>企业/中介系统部署</h2>
+          <div class="price">¥599起</div>
+          <p>适合小团队、咨询机构、资源方。</p>
+          <p>包含：留资页面、后台客户管理、防骗检测、岗位展示、部署指导。</p>
+          <button onclick="selectService('企业/中介系统部署', '599起')">咨询购买</button>
+        </div>
+      </div>
+      <div class="pay-note">
+        <b>付款说明：</b>当前版本不直接接支付接口。用户点击“咨询购买”后会跳到免费咨询表单，并自动填写服务名称。你可通过微信 <b>znm1108</b> 或 Telegram <b>@zleisheng</b> 沟通收款和交付。
+      </div>
+      <div class="warning" style="margin-top:12px">
+        合规提醒：所有付费项目都是资料整理、风险提示和咨询服务，不是岗位买卖，不是签证担保，不是对外劳务派遣。
+      </div>
+    </div>
+  </section>
+
   <section id="apply" class="tab hide">
     <div class="card">
       <h2>免费海外工作咨询申请</h2>
@@ -242,6 +306,8 @@
         <div>
           <label>姓名</label><input id="aName" placeholder="请输入姓名"/>
           <label>手机/微信</label><input id="aContact" placeholder="手机号或微信"/>
+          <label>咨询/购买服务</label><input id="aService" placeholder="例如：免费咨询 / 标准求职资料包 / 岗位风险报告"/>
+          <label>付款状态</label><select id="aPayStatus"><option>未付款</option><option>已付款</option><option>待确认</option></select>
           <label>年龄</label><input id="aAge" placeholder="例如：35"/>
           <label>当前所在地</label><input id="aCity" placeholder="例如：江苏徐州"/>
           <label>是否有护照</label><select id="aPassport"><option>有护照</option><option>没有护照</option><option>正在办理</option></select>
@@ -298,6 +364,7 @@
         <div><label>工种</label><input id="filterSkill" oninput="renderApplies()" placeholder="焊工/电工/司机"/></div>
         <div><label>客户状态</label><select id="filterStatus" onchange="renderApplies()"><option value="">全部</option><option>未联系</option><option>已联系</option><option>有意向</option><option>已推荐</option><option>无效</option></select></div>
         <div><label>客户标签</label><select id="filterTag" onchange="renderApplies()"><option value="">全部</option><option>高意向</option><option>需跟进</option><option>资料不全</option><option>待推荐</option><option>无效</option></select></div>
+        <div><label>付款状态</label><select id="filterPay" onchange="renderApplies()"><option value="">全部</option><option>未付款</option><option>已付款</option><option>待确认</option></select></div>
       </div>
       <h3>咨询申请列表</h3>
       <div id="applyList"></div>
@@ -306,7 +373,7 @@
 </main>
 
 <footer>
-  出海工作资源助手 V2.3 · 专业信息平台版 / 岗位信息 / 避坑指南
+  出海工作资源助手 V2.4 · 变现入口版 / 资料服务 / 风险报告
   <br>
   <span class="admin-mini" onclick="openAdmin()">管理入口</span>
 </footer>
@@ -488,7 +555,15 @@ function renderGuides(){
 
 function collectApply(){
   const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n证书情况：${aCertificate.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
-  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.2",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value};
+  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.4",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value,service_name:aService.value.trim()||"免费咨询",pay_status:aPayStatus.value};
+}
+
+function selectService(name, price){
+  showTab("apply");
+  aService.value = `${name}（${price}元）`;
+  aPayStatus.value = "未付款";
+  aNote.value = `我想咨询/购买：${name}，价格：${price}元。请联系我。`;
+  setTimeout(()=>document.getElementById("aName").scrollIntoView({behavior:"smooth"}),100);
 }
 async function saveApply(){
   const item=collectApply(); if(!item.name||!item.contact){alert("请填写姓名和联系方式");return;}
@@ -502,7 +577,7 @@ async function saveApply(){
     alert("云端保存失败，已先保存到本机兜底记录。原因："+(e.message||e));
   }finally{
     submitBtn.disabled=false; submitBtn.textContent="提交申请";
-    ["aName","aContact","aAge","aCity","aCountry","aSkill","aSalary","aExp","aNote"].forEach(id=>document.getElementById(id).value="");
+    ["aName","aContact","aAge","aCity","aCountry","aSkill","aSalary","aExp","aNote","aService"].forEach(id=>document.getElementById(id).value="");
     updateStats();
   }
 }
@@ -526,14 +601,15 @@ function statusTag(s){
   return `<span class="tag ${map[s]||""}">${s||"未联系"}</span>`;
 }
 function renderApplies(){
-  const c=(filterCountry?.value||"").toLowerCase(), s=(filterSkill?.value||"").toLowerCase(), st=(filterStatus?.value||""), tg=(filterTag?.value||"");
-  const data=applies.filter(a=>(!c||String(a.country||"").toLowerCase().includes(c))&&(!s||String(a.skill||"").toLowerCase().includes(s))&&(!st||(a.status||"未联系")===st)&&(!tg||(a.customer_tag||"需跟进")===tg));
+  const c=(filterCountry?.value||"").toLowerCase(), s=(filterSkill?.value||"").toLowerCase(), st=(filterStatus?.value||""), tg=(filterTag?.value||""), py=(filterPay?.value||"");
+  const data=applies.filter(a=>(!c||String(a.country||"").toLowerCase().includes(c))&&(!s||String(a.skill||"").toLowerCase().includes(s))&&(!st||(a.status||"未联系")===st)&&(!tg||(a.customer_tag||"需跟进")===tg)&&(!py||(a.pay_status||"未付款")===py));
   applyList.innerHTML=data.map((a,i)=>{
     const expTxt = String(a.experience||a.exp||"");
     return `<div class="job"><h3>${a.name||""} · ${a.skill||"未填工种"}</h3>
-      <span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}${statusTag(a.status||"未联系")}<span class="tag purple">${a.customer_tag||"需跟进"}</span>
+      <span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}${statusTag(a.status||"未联系")}<span class="tag purple">${a.customer_tag||"需跟进"}</span><span class="tag green">${a.pay_status||"未付款"}</span>
       <p><b>时间：</b>${fmtTime(a.created_at)}</p>
       <p><b>联系：</b>${a.contact||""}</p>
+      <p><b>咨询服务：</b>${a.service_name||"免费咨询"}</p>
       <p><b>年龄/所在地：</b>${a.age||""} / ${a.city||""}</p>
       <p><b>经验：</b>${expTxt.replace(/\n/g,"<br>")}</p>
       <p><b>客户备注：</b>${a.note||""}</p>
@@ -541,8 +617,10 @@ function renderApplies(){
       ${a.id?`<div class="toolbar">
         <button class="secondary" onclick="copyCustomerInfo('${a.id}')">复制客户信息</button>
         <button class="green" onclick="copyContactScript('${a.id}')">复制联系话术</button>
+        <button class="gold" onclick="copyPaymentScript('${a.id}')">复制付款说明</button>
         <select id="status_${a.id}"><option ${sel(a.status,"未联系")}>未联系</option><option ${sel(a.status,"已联系")}>已联系</option><option ${sel(a.status,"有意向")}>有意向</option><option ${sel(a.status,"已推荐")}>已推荐</option><option ${sel(a.status,"无效")}>无效</option></select>
         <select id="tag_${a.id}"><option ${sel(a.customer_tag,"高意向")}>高意向</option><option ${sel(a.customer_tag,"需跟进")}>需跟进</option><option ${sel(a.customer_tag,"资料不全")}>资料不全</option><option ${sel(a.customer_tag,"待推荐")}>待推荐</option><option ${sel(a.customer_tag,"无效")}>无效</option></select>
+        <select id="pay_${a.id}"><option ${sel(a.pay_status,"未付款")}>未付款</option><option ${sel(a.pay_status,"已付款")}>已付款</option><option ${sel(a.pay_status,"待确认")}>待确认</option></select>
         <input id="note_${a.id}" placeholder="跟进备注" value="${escapeAttr(a.admin_note||"")}">
         <button class="gold" onclick="updateApplyStatus('${a.id}')">保存跟进</button><button class="danger" onclick="deleteCloudApply('${a.id}')">删除</button>
       </div>`:""}</div>`;
@@ -554,7 +632,7 @@ function fmtTime(t){try{return t?new Date(t).toLocaleString():""}catch(e){return
 
 function getApplyById(id){return applies.find(x=>String(x.id)===String(id)) || {};}
 function buildCustomerInfo(a){
-  return `【海外工作咨询客户】\n姓名：${a.name||""}\n联系方式：${a.contact||""}\n年龄：${a.age||""}\n所在地：${a.city||""}\n想去国家：${a.country||""}\n工种/技能：${a.skill||""}\n护照：${a.passport||""}\n经验：${String(a.experience||"").replace(/\n/g,"；")}\n客户备注：${a.note||""}\n跟进状态：${a.status||"未联系"}\n客户标签：${a.customer_tag||"需跟进"}\n跟进备注：${a.admin_note||""}`;
+  return `【海外工作咨询客户】\n姓名：${a.name||""}\n联系方式：${a.contact||""}\n咨询服务：${a.service_name||"免费咨询"}\n付款状态：${a.pay_status||"未付款"}\n年龄：${a.age||""}\n所在地：${a.city||""}\n想去国家：${a.country||""}\n工种/技能：${a.skill||""}\n护照：${a.passport||""}\n经验：${String(a.experience||"").replace(/\n/g,"；")}\n客户备注：${a.note||""}\n跟进状态：${a.status||"未联系"}\n客户标签：${a.customer_tag||"需跟进"}\n跟进备注：${a.admin_note||""}`;
 }
 function copyCustomerInfo(id){
   const a=getApplyById(id);
@@ -568,12 +646,20 @@ function copyContactScript(id){
   navigator.clipboard?.writeText(txt);
   alert("已复制联系话术");
 }
+
+function copyPaymentScript(id){
+  const a=getApplyById(id);
+  const txt=`你好，你咨询的是：${a.service_name||"资料整理/咨询服务"}。\n说明：我们提供的是信息整理、风险提示、求职资料制作和咨询沟通服务，不承诺录用、不保证签证、不收押金。\n如你确认需要办理此项资料服务，可以通过微信 znm1108 联系确认付款方式。付款后请备注姓名和服务名称，方便后台标记。`;
+  navigator.clipboard?.writeText(txt);
+  alert("已复制付款说明");
+}
 async function updateApplyStatus(id){
   if(!cloudReady||!sb){alert("云端未连接");return;}
   const status=document.getElementById("status_"+id).value;
   const customer_tag=document.getElementById("tag_"+id).value;
+  const pay_status=document.getElementById("pay_"+id).value;
   const admin_note=document.getElementById("note_"+id).value;
-  const {error}=await sb.from(TABLE_NAME).update({status,customer_tag,admin_note}).eq("id",id);
+  const {error}=await sb.from(TABLE_NAME).update({status,customer_tag,pay_status,admin_note}).eq("id",id);
   if(error)alert("保存失败："+error.message);else{alert("已保存跟进状态");loadCloudApplies();}
 }
 async function deleteCloudApply(id){
@@ -585,19 +671,19 @@ async function deleteCloudApply(id){
 async function syncLocalToCloud(){
   if(!cloudReady||!sb){alert("Supabase 未配置，不能补传");return;}
   if(!localFallback.length){alert("没有本地兜底记录");return;}
-  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.2-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||""}));
+  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.4-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||"",service_name:x.service_name||"免费咨询",pay_status:x.pay_status||"未付款"}));
   const {error}=await sb.from(TABLE_NAME).insert(rows);
   if(error){alert("补传失败："+error.message);return;}
   localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");alert("补传成功，本地兜底记录已清空");loadCloudApplies();
 }
 function clearLocalApplies(){if(confirm("确定清空本机兜底记录？不会删除云端数据。")){localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");if(!cloudReady){applies=[];renderApplies();}updateStats();}}
-function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.2"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
+function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.4"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
 function csvEscape(v){v=String(v??"");return '"'+v.replace(/"/g,'""').replace(/\n/g,' ')+'"';}
 function exportCSV(){
-  const headers=["时间","姓名","联系方式","年龄","所在地","护照","想去国家","工种技能","证书","工作经验","客户备注","跟进状态","客户标签","跟进备注","来源"];
-  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.age,a.city,a.passport,a.country,a.skill,a.certificate||"",a.experience||a.exp,a.note,a.status||"未联系",a.customer_tag||"需跟进",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
+  const headers=["时间","姓名","联系方式","咨询服务","付款状态","年龄","所在地","护照","想去国家","工种技能","证书","工作经验","客户备注","跟进状态","客户标签","跟进备注","来源"];
+  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.service_name||"免费咨询",a.pay_status||"未付款",a.age,a.city,a.passport,a.country,a.skill,a.certificate||"",a.experience||a.exp,a.note,a.status||"未联系",a.customer_tag||"需跟进",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
   const csv="\ufeff"+[headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.2.csv";a.click();
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.4.csv";a.click();
 }
 
 initContacts();
