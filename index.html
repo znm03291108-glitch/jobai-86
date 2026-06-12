@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2</title>
+  <title>出海工作资源助手 V2.1</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -11,7 +11,7 @@
     header{padding:28px 16px;background:linear-gradient(135deg,#0b2c54,#08111f 70%);border-bottom:1px solid rgba(255,255,255,.09)}
     .wrap{max-width:1180px;margin:0 auto}
     .badge{display:inline-block;padding:6px 10px;border:1px solid rgba(79,188,255,.35);border-radius:999px;color:#9bdcff;background:rgba(79,188,255,.08);font-size:13px}
-    h1{font-size:32px;margin:14px 0 8px}
+    h1{font-size:31px;margin:14px 0 8px}
     h2{margin:0 0 12px}
     h3{margin:16px 0 8px}
     p{line-height:1.7}
@@ -21,6 +21,7 @@
     button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#dcecff}
     button.danger{background:#df3f45}
     button.green{background:#14945b}
+    button.gold{background:#b7791f}
     button:disabled{opacity:.45;cursor:not-allowed}
     main{padding:16px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -37,6 +38,8 @@
     .tag{display:inline-block;margin:3px 5px 3px 0;padding:4px 8px;border-radius:999px;background:rgba(21,120,255,.13);color:#9bd2ff;font-size:12px}
     .tag.red{background:rgba(230,57,70,.16);color:#ffd1d6}
     .tag.yellow{background:rgba(255,183,77,.16);color:#ffe1ae}
+    .tag.green{background:rgba(37,190,118,.16);color:#c9ffe0}
+    .tag.purple{background:rgba(168,85,247,.18);color:#e7d3ff}
     .warning{background:rgba(255,183,77,.1);border:1px solid rgba(255,183,77,.22);color:#ffe1ae;border-radius:14px;padding:12px}
     .ok{background:rgba(37,190,118,.11);border:1px solid rgba(37,190,118,.24);color:#c9ffe0;border-radius:14px;padding:12px}
     .dangerBox{background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.24);color:#ffd1d6;border-radius:14px;padding:12px}
@@ -47,6 +50,12 @@
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
     .locked{max-width:520px;margin:20px auto}
     .status{font-size:13px;margin:8px 0;color:#9fd5ff}
+    .contactBox{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .contactBox a{text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;color:#fff;font-weight:700}
+    .steps{counter-reset:step}
+    .steps p{margin:8px 0;padding-left:32px;position:relative}
+    .steps p:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:2px;background:#1578ff;color:white;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:800}
+    .admin-mini{opacity:.45;font-size:12px;text-decoration:underline;cursor:pointer;margin-top:18px;display:inline-block}
     code{background:rgba(255,255,255,.08);padding:2px 5px;border-radius:6px}
     @media(max-width:880px){.grid,.grid3{grid-template-columns:1fr}.kpi{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}}
   </style>
@@ -54,18 +63,17 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2 · 云端客户记录版</span>
-    <h1>帮助中国求职者了解海外工作机会，降低被骗风险，提高求职准备效率</h1>
-    <p class="sub">V2 升级：咨询申请云端保存、管理员后台统一查看、云端导出 CSV、本地兜底保存。平台只做信息整理、风险提示、求职工具和咨询留资；不承诺录用，不保证签证，不做非法劳务。</p>
+    <span class="badge">出海工作资源助手 V2.1 · 正式推广优化版</span>
+    <h1>海外工作信息整理、防骗检测、求职资料生成、正规资源对接</h1>
+    <p class="sub">面向想了解海外工作机会的中国求职者。平台提供岗位信息整理、风险提示、简历/话术工具和咨询留资；不承诺录用，不保证签证，不收押金，不做非法劳务。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
-    <div class="nav">
+    <div class="nav" id="publicNav">
       <button onclick="showTab('home')">首页</button>
       <button class="secondary" onclick="showTab('jobs')">岗位资源</button>
-      <button class="secondary" onclick="showTab('risk')">岗位风险检测</button>
-      <button class="secondary" onclick="showTab('resume')">AI简历生成</button>
+      <button class="secondary" onclick="showTab('risk')">防骗检测</button>
+      <button class="secondary" onclick="showTab('resume')">AI简历</button>
       <button class="secondary" onclick="showTab('guides')">国家指南</button>
-      <button class="secondary" onclick="showTab('apply')">咨询申请</button>
-      <button class="secondary" onclick="showTab('admin')">后台记录</button>
+      <button class="secondary" onclick="showTab('apply')">免费咨询</button>
     </div>
   </div>
 </header>
@@ -78,14 +86,38 @@
       <div class="stat"><b id="applyCount">0</b><span>云端申请</span></div>
       <div class="stat"><b id="riskCount">0</b><span>风险检测</span></div>
     </div>
+
     <div class="grid3">
-      <div class="card"><h2>海外岗位资源</h2><p>按国家、工种、项目类型整理机会，先做信息展示和咨询留资，后期再接正规合作方。</p><button onclick="showTab('jobs')">查看岗位资源</button></div>
-      <div class="card"><h2>防骗检测工具</h2><p>识别异常高薪、提前收费、包下签、护照保管、黑工、信息不透明等风险。</p><button onclick="showTab('risk')">检测招聘信息</button></div>
-      <div class="card"><h2>云端客户记录</h2><p>用户提交咨询申请后，数据进入 Supabase 云端数据库，你在后台统一查看。</p><button onclick="showTab('admin')">进入后台</button></div>
+      <div class="card"><h2>热门国家</h2><p>新加坡、日本、中东、非洲、澳大利亚、加拿大、远程岗位。先帮你看清流程和风险，再决定是否继续。</p><button onclick="showTab('jobs')">查看岗位方向</button></div>
+      <div class="card"><h2>适合人群</h2><p>焊工、电工、司机、厨师、机械维修、工程项目人员、仓库工、工厂工、护理/介护、跨境客服等。</p><button onclick="showTab('apply')">提交咨询</button></div>
+      <div class="card"><h2>防骗优先</h2><p>重点识别异常高薪、提前收费、保证下签、扣护照、黑工、合同不清楚、雇主不透明等风险。</p><button onclick="showTab('risk')">检测招聘信息</button></div>
     </div>
+
+    <div class="grid" style="margin-top:16px">
+      <div class="card">
+        <h2>服务流程</h2>
+        <div class="steps">
+          <p>提交基本信息：国家、工种、经验、护照、期望工资。</p>
+          <p>初步判断方向：适合哪些国家、哪些岗位、哪些风险要避开。</p>
+          <p>生成求职资料：中文简历、英文简历、求职信、联系话术。</p>
+          <p>后续可对接正规资源，用户自行核实合同、签证和费用。</p>
+        </div>
+      </div>
+      <div class="card">
+        <h2>联系客服</h2>
+        <p class="small">把下面联系方式改成你自己的微信/WhatsApp/Telegram。推广时用户可以直接联系你。</p>
+        <div class="contactBox">
+          <a id="wechatLink" href="javascript:void(0)" onclick="copyText(WECHAT_ID)">微信：<span id="wechatShow"></span></a>
+          <a id="whatsappLink" href="#" target="_blank">WhatsApp</a>
+          <a id="telegramLink" href="#" target="_blank">Telegram</a>
+        </div>
+        <p class="small">咨询时建议准备：年龄、护照、工种、证书、工作年限、想去国家、预算、是否接受工地/矿山/工厂。</p>
+      </div>
+    </div>
+
     <div class="card" style="margin-top:16px">
-      <h2>平台边界和合规声明</h2>
-      <div class="warning">本平台 V2 只提供信息整理、风险提示、求职工具和咨询线索收集；不承诺安排工作，不保证签证通过，不收取高额押金，不发布黑工、非法滞留、虚假高薪岗位。涉及出国劳务、签证、合同，必须以正规持牌机构和官方信息为准。</div>
+      <h2>平台边界和免责声明</h2>
+      <div class="warning">本平台只提供信息整理、风险提示、求职资料生成和咨询线索收集；不承诺安排工作，不保证签证通过，不收取押金，不发布黑工、非法滞留、虚假高薪岗位。涉及出国劳务、签证、合同、收费，必须以正规持牌机构和官方信息为准。</div>
     </div>
   </section>
 
@@ -97,7 +129,7 @@
         <div><label>搜索岗位/关键词</label><input id="jobSearch" oninput="renderJobs()" placeholder="焊工、司机、厨师、矿山、维修、仓库、护理"/></div>
       </div>
       <div id="jobList"></div>
-      <p class="small">说明：V2 为岗位样例库，正式运营时需要人工核实雇主、合同、签证类别、费用和资质。</p>
+      <p class="small">说明：岗位为方向样例，正式对接前必须核实雇主、合同、签证类别、费用、保险和资质。</p>
     </div>
   </section>
 
@@ -110,7 +142,7 @@
         <div class="toolbar">
           <button onclick="checkRisk()">开始检测</button>
           <button class="secondary" onclick="riskText.value=''">清空</button>
-          <button class="secondary" onclick="riskText.value='新加坡焊工月薪10万，包吃住，不需要经验，先交押金2万，保证下签，护照交公司保管。'">填入高风险示例</button>
+          <button class="secondary" onclick="riskText.value='新加坡焊工月薪10万，包吃住，不需要经验，先交押金2万，保证下签，护照交公司保管。'">高风险示例</button>
         </div>
       </div>
       <div class="card">
@@ -146,8 +178,8 @@
 
   <section id="apply" class="tab hide">
     <div class="card">
-      <h2>海外工作咨询申请</h2>
-      <div id="applyCloudTip" class="ok">云端提交：已启用。提交后管理员后台可以看到。</div>
+      <h2>免费海外工作咨询申请</h2>
+      <div id="applyCloudTip" class="ok">云端提交：已启用。提交后客服后台可以看到。</div>
       <div class="grid">
         <div>
           <label>姓名</label><input id="aName" placeholder="请输入姓名"/>
@@ -155,36 +187,39 @@
           <label>年龄</label><input id="aAge" placeholder="例如：35"/>
           <label>当前所在地</label><input id="aCity" placeholder="例如：江苏徐州"/>
           <label>是否有护照</label><select id="aPassport"><option>有护照</option><option>没有护照</option><option>正在办理</option></select>
+          <label>语言能力</label><select id="aLanguage"><option>不会外语</option><option>英语基础</option><option>英语可沟通</option><option>日语基础</option><option>日语可沟通</option><option>其他</option></select>
         </div>
         <div>
           <label>想去国家</label><input id="aCountry" placeholder="新加坡 / 日本 / 中东 / 澳大利亚"/>
           <label>工种/技能</label><input id="aSkill" placeholder="焊工、电工、司机、厨师、机械维修等"/>
+          <label>期望工资</label><input id="aSalary" placeholder="例如：12000-18000/月"/>
+          <label>是否接受工地/矿山/工厂</label><select id="aAcceptSite"><option>可以接受</option><option>只接受工厂</option><option>只接受城市岗位</option><option>需要再了解</option></select>
           <label>工作经验</label><textarea id="aExp" placeholder="简单说明工作经验、证书、语言能力"></textarea>
-          <label>备注</label><textarea id="aNote" placeholder="比如预算、期望工资、出发时间、是否接受项目工地"></textarea>
+          <label>备注</label><textarea id="aNote" placeholder="比如预算、出发时间、证书情况、家庭顾虑等"></textarea>
         </div>
       </div>
       <button id="submitBtn" onclick="saveApply()">提交申请</button>
-      <p class="small">如果云端配置错误或网络失败，系统会先保存到本机兜底记录里。</p>
+      <p class="small">提交代表你同意平台用于咨询跟进。平台不收押金，不保证录用和签证。</p>
     </div>
   </section>
 
   <section id="admin" class="tab hide">
     <div id="adminLogin" class="card locked">
       <h2>管理员登录</h2>
-      <p class="small">默认密码：123456。正式推广前建议在代码里修改 <code>ADMIN_PASSWORD</code>。</p>
+      <p class="small">后台入口已隐藏。默认密码：123456。正式推广前建议在代码里修改 <code>ADMIN_PASSWORD</code>。</p>
       <label>后台密码</label>
       <input id="adminPass" type="password" placeholder="请输入后台密码"/>
       <button onclick="loginAdmin()">进入后台</button>
     </div>
 
     <div id="adminPanel" class="card hide">
-      <h2>后台记录</h2>
+      <h2>后台客户跟进</h2>
       <div id="adminCloudTip" class="status"></div>
       <div class="toolbar">
         <button onclick="loadCloudApplies()">刷新云端数据</button>
         <button class="green" onclick="exportCSV()">导出申请 CSV</button>
         <button class="secondary" onclick="exportData()">导出 JSON</button>
-        <button class="secondary" onclick="syncLocalToCloud()">补传本地兜底记录</button>
+        <button class="secondary" onclick="syncLocalToCloud()">补传本地兜底</button>
         <button class="danger" onclick="clearLocalApplies()">清空本地兜底</button>
         <button class="secondary" onclick="logoutAdmin()">退出后台</button>
       </div>
@@ -192,7 +227,7 @@
       <div class="grid3">
         <div><label>国家</label><input id="filterCountry" oninput="renderApplies()" placeholder="中东/新加坡/日本"/></div>
         <div><label>工种</label><input id="filterSkill" oninput="renderApplies()" placeholder="焊工/电工/司机"/></div>
-        <div><label>护照</label><select id="filterPassport" onchange="renderApplies()"><option value="">全部</option><option>有护照</option><option>没有护照</option><option>正在办理</option></select></div>
+        <div><label>客户状态</label><select id="filterStatus" onchange="renderApplies()"><option value="">全部</option><option>未联系</option><option>已联系</option><option>有意向</option><option>已推荐</option><option>无效</option></select></div>
       </div>
       <h3>咨询申请列表</h3>
       <div id="applyList"></div>
@@ -200,39 +235,37 @@
   </section>
 </main>
 
-<footer>出海工作资源助手 V2 · 云端客户记录 / 后台统一查看 / CSV导出</footer>
+<footer>
+  出海工作资源助手 V2.1 · 正式推广版 / 隐藏后台 / 客户状态跟进
+  <br>
+  <span class="admin-mini" onclick="openAdmin()">管理入口</span>
+</footer>
 
 <script>
 /* =========================
-   第一步：把下面两个值换成你的 Supabase
+   重要配置：已填入你的 Supabase
    ========================= */
 const SUPABASE_URL = "https://rcwuftrhdcputrmjqaed.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Phb6AdsY4s_dfJCTOC7Kvw_4b33w3LM";
-/* 后台密码：可以改成你自己的 */
 const ADMIN_PASSWORD = "123456";
-
-/* 表名：Supabase 里建 applications 表 */
 const TABLE_NAME = "applications";
+
+/* 客服联系方式：改成你自己的 */
+const WECHAT_ID = "请填写你的微信号";
+const WHATSAPP_URL = "https://wa.me/8613800000000";
+const TELEGRAM_URL = "https://t.me/yourname";
 
 let sb = null;
 let cloudReady = false;
 
 function initSupabase(){
-  if(!SUPABASE_URL || SUPABASE_URL.includes("PASTE_YOUR") || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes("PASTE_YOUR")){
-    cloudReady = false;
-    cloudStatus.textContent = "云端状态：未配置 Supabase，当前只能本地兜底保存";
-    cloudStatus.style.color = "#ffe1ae";
-    applyCloudTip.className = "warning";
-    applyCloudTip.textContent = "云端提交：未配置。请先填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。";
-    return;
-  }
   try{
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     cloudReady = true;
     cloudStatus.textContent = "云端状态：Supabase 已配置";
     cloudStatus.style.color = "#c9ffe0";
     applyCloudTip.className = "ok";
-    applyCloudTip.textContent = "云端提交：已启用。提交后管理员后台可以看到。";
+    applyCloudTip.textContent = "云端提交：已启用。提交后客服后台可以看到。";
   }catch(e){
     cloudReady = false;
     cloudStatus.textContent = "云端状态：Supabase 初始化失败";
@@ -241,29 +274,29 @@ function initSupabase(){
 }
 
 const JOBS = [
-  {country:"新加坡", title:"建筑/装修普工", pay:"约 8000-15000 RMB/月参考", tags:["建筑","普工","需核实准证"], note:"适合有建筑经验人员，重点核实雇主、准证类型、住宿、加班费。"},
-  {country:"新加坡", title:"厨师/帮厨", pay:"约 9000-16000 RMB/月参考", tags:["餐饮","厨师","服务业"], note:"需核实工作时间、休息日、是否扣住宿餐费。"},
-  {country:"日本", title:"特定技能/介护辅助", pay:"按当地工资和合同", tags:["护理","日语","特定技能"], note:"通常需要语言和技能要求，必须确认签证路径是否合法。"},
-  {country:"日本", title:"食品加工/工厂岗位", pay:"按当地工资和合同", tags:["工厂","食品加工","日语"], note:"需核实派遣公司资质、合同期限、住宿费用。"},
+  {country:"新加坡", title:"建筑/装修普工", pay:"约 8000-15000 RMB/月参考", tags:["建筑","普工","准证需核实"], note:"核实雇主、准证类型、住宿、加班费、是否扣费。"},
+  {country:"新加坡", title:"厨师/帮厨", pay:"约 9000-16000 RMB/月参考", tags:["餐饮","厨师","服务业"], note:"核实工作时间、休息日、住宿餐费、合同主体。"},
+  {country:"日本", title:"特定技能/介护辅助", pay:"按当地合同", tags:["护理","日语","特定技能"], note:"通常需要语言和技能要求，必须确认签证路径合法。"},
+  {country:"日本", title:"食品加工/工厂岗位", pay:"按当地合同", tags:["工厂","食品加工","日语"], note:"核实派遣公司资质、合同期限、住宿费用。"},
   {country:"中东", title:"工程项目电工/焊工", pay:"按项目合同", tags:["电工","焊工","工程项目"], note:"适合有证书和项目经验人员，重点核实保险、安全、护照保管。"},
-  {country:"中东", title:"工程机械维修", pay:"按项目合同", tags:["维修","矿山","机械"], note:"适合维修服务人员，需核实工作地点、休假制度、项目安全。"},
-  {country:"非洲", title:"矿山/工程项目司机", pay:"按项目合同", tags:["司机","矿山","工程"], note:"重点核实安全环境、保险、合同主体、工资支付方式。"},
-  {country:"澳大利亚", title:"农业季节工/农场工", pay:"按当地法规和项目", tags:["农业","季节工","英语"], note:"需核实签证类型、合法雇主、住宿交通和税务。"},
+  {country:"中东", title:"工程机械维修", pay:"按项目合同", tags:["维修","矿山","机械"], note:"适合维修服务人员，核实地点、休假制度、项目安全。"},
+  {country:"非洲", title:"矿山/工程项目司机", pay:"按项目合同", tags:["司机","矿山","工程"], note:"重点核实安全环境、保险、工资支付方式。"},
+  {country:"澳大利亚", title:"农业季节工/农场工", pay:"按当地法规", tags:["农业","季节工","英语"], note:"核实签证类型、合法雇主、住宿交通和税务。"},
   {country:"加拿大", title:"技术工/蓝领岗位信息", pay:"按岗位和省份", tags:["技术工","英语","长期路径"], note:"申请周期较长，警惕保证移民、保证高薪宣传。"},
-  {country:"远程", title:"中文客服/跨境电商运营", pay:"按项目结算", tags:["远程","客服","电商"], note:"适合先低成本尝试，需防范刷单、垫资、押金骗局。"}
+  {country:"远程", title:"中文客服/跨境电商运营", pay:"按项目结算", tags:["远程","客服","电商"], note:"适合低成本尝试，防范刷单、垫资、押金骗局。"}
 ];
 
 const GUIDES = [
-  {title:"新加坡工作注意事项", body:"重点核实准证类型、雇主信息、住宿费用、加班费、是否有中介收费、合同是否有中文解释。不要相信不需要任何条件却高薪的岗位。"},
+  {title:"新加坡工作注意事项", body:"重点核实准证类型、雇主信息、住宿费用、加班费、中介收费、合同是否有中文解释。不要相信无条件高薪。"},
   {title:"日本工作注意事项", body:"关注签证路径、日语要求、技能考试、合同期限、实际到手工资、住宿和保险。警惕借培训名义高收费。"},
   {title:"中东工程项目注意事项", body:"重点看合同主体、项目地点、安全保障、护照保管、工资支付、休假制度、保险和医疗安排。"},
-  {title:"非洲项目注意事项", body:"重点核实项目真实性、安全环境、医疗保障、工资结算、是否有驻地管理、回国休假和突发情况处理机制。"},
-  {title:"海外招聘防骗清单", body:"凡是保证下签、提前收高额押金、要求交护照、合同模糊、工资远高于市场、不提供雇主信息的，都要高度警惕。"},
+  {title:"非洲项目注意事项", body:"重点核实项目真实性、安全环境、医疗保障、工资结算、驻地管理、回国休假和突发情况处理机制。"},
+  {title:"海外招聘防骗清单", body:"凡是保证下签、提前高额押金、要求交护照、合同模糊、工资远高于市场、不提供雇主信息的，都要高度警惕。"},
   {title:"出国前资料清单", body:"护照、无犯罪/体检、技能证书、工作证明、简历、合同、保险、紧急联系人、雇主信息、签证材料、费用明细。"}
 ];
 
 let applies = [];
-let localFallback = JSON.parse(localStorage.getItem("ow_v2_local_fallback") || "[]");
+let localFallback = JSON.parse(localStorage.getItem("ow_v21_local_fallback") || "[]");
 let riskCount = Number(localStorage.getItem("ow_risk_count") || 0);
 let adminOK = sessionStorage.getItem("ow_admin_ok") === "1";
 
@@ -275,11 +308,18 @@ function showTab(id){
   if(id==="admin")showAdmin();
   updateStats();
 }
+function openAdmin(){showTab("admin");}
 function updateStats(){
   document.getElementById("jobCount").textContent=JOBS.length;
   document.getElementById("countryCount").textContent=[...new Set(JOBS.map(j=>j.country))].length;
   document.getElementById("applyCount").textContent=applies.length || localFallback.length;
   document.getElementById("riskCount").textContent=riskCount;
+}
+function copyText(t){navigator.clipboard?.writeText(t);alert("已复制："+t);}
+function initContacts(){
+  wechatShow.textContent = WECHAT_ID;
+  whatsappLink.href = WHATSAPP_URL;
+  telegramLink.href = TELEGRAM_URL;
 }
 function initCountries(){
   const s=document.getElementById("jobCountry");
@@ -292,221 +332,137 @@ function renderJobs(){
   const q=(document.getElementById("jobSearch").value||"").toLowerCase();
   const list=document.getElementById("jobList");
   const data=JOBS.filter(j=>(!c||j.country===c) && JSON.stringify(j).toLowerCase().includes(q));
-  list.innerHTML=data.map(j=>`<div class="job"><h3>${j.title}</h3><span class="tag">${j.country}</span>${j.tags.map(t=>`<span class="tag">${t}</span>`).join("")}<p><b>薪资参考：</b>${j.pay}</p><p><b>核实重点：</b>${j.note}</p><button onclick="quickApply('${j.country}','${j.title}')">我想咨询这个岗位</button></div>`).join("") || "<p class='small'>没有找到匹配岗位。</p>";
+  list.innerHTML=data.map(j=>`<div class="job"><h3>${j.title}</h3><span class="tag">${j.country}</span>${j.tags.map(t=>`<span class="tag">${t}</span>`).join("")}<p><b>薪资参考：</b>${j.pay}</p><p><b>核实重点：</b>${j.note}</p><button onclick="quickApply('${j.country}','${j.title}')">咨询这个方向</button></div>`).join("") || "<p class='small'>没有找到匹配岗位。</p>";
 }
-function quickApply(country,title){showTab("apply");aCountry.value=country;aSkill.value=title;aNote.value="我想咨询岗位："+title;}
+function quickApply(country,title){showTab("apply");aCountry.value=country;aSkill.value=title;aNote.value="我想咨询岗位方向："+title;}
 
-function normalizeMoneyText(txt){
-  return txt.replace(/十万/g,"10万").replace(/三万/g,"3万").replace(/五万/g,"5万").replace(/两万/g,"2万").replace(/二万/g,"2万");
-}
+function normalizeMoneyText(txt){return txt.replace(/十万/g,"10万").replace(/三万/g,"3万").replace(/五万/g,"5万").replace(/两万/g,"2万").replace(/二万/g,"2万");}
 function extractSalaryRisk(txt){
-  const t = normalizeMoneyText(txt);
-  let hits = [];
-  let maxMonthly = 0;
-  const patterns = [
-    /月薪\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/月入\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,
-    /工资\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/薪资\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,
-    /([0-9]+(?:\.[0-9]+)?)\s*万\s*(?:每月|一个月|\/月|月)/g,
-    /月薪\s*([0-9]{5,6})/g,/月入\s*([0-9]{5,6})/g,/工资\s*([0-9]{5,6})/g,/薪资\s*([0-9]{5,6})/g
-  ];
-  patterns.forEach(re=>{
-    let m;
-    while((m = re.exec(t)) !== null){
-      let val = Number(m[1]);
-      if(re.source.includes("\\s*万")) val = val * 10000;
-      if(val > maxMonthly) maxMonthly = val;
-    }
-  });
-  if(maxMonthly >= 80000) hits.push({level:4, text:`异常高薪：识别到月收入约 ${maxMonthly} 元，远高于多数普通海外蓝领岗位，需要高度警惕。`});
-  else if(maxMonthly >= 50000) hits.push({level:3, text:`高薪需强核实：识别到月收入约 ${maxMonthly} 元，需核实税前税后、工时、加班、合同和岗位真实性。`});
-  else if(maxMonthly >= 30000) hits.push({level:2, text:`较高薪资：识别到月收入约 ${maxMonthly} 元，需核实是否真实到手、是否包含高强度加班或扣费。`});
-  else if(maxMonthly >= 20000) hits.push({level:1, text:`薪资偏高：识别到月收入约 ${maxMonthly} 元，建议核实工资结构和扣费。`});
+  const t = normalizeMoneyText(txt); let hits = []; let maxMonthly = 0;
+  const patterns = [/月薪\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/月入\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/工资\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/薪资\s*([0-9]+(?:\.[0-9]+)?)\s*万/g,/([0-9]+(?:\.[0-9]+)?)\s*万\s*(?:每月|一个月|\/月|月)/g,/月薪\s*([0-9]{5,6})/g,/月入\s*([0-9]{5,6})/g,/工资\s*([0-9]{5,6})/g,/薪资\s*([0-9]{5,6})/g];
+  patterns.forEach(re=>{let m;while((m=re.exec(t))!==null){let val=Number(m[1]);if(re.source.includes("\\s*万"))val*=10000;if(val>maxMonthly)maxMonthly=val;}});
+  if(maxMonthly>=80000)hits.push({level:4,text:`异常高薪：识别到月收入约 ${maxMonthly} 元，远高于多数普通海外蓝领岗位，需要高度警惕。`});
+  else if(maxMonthly>=50000)hits.push({level:3,text:`高薪需强核实：识别到月收入约 ${maxMonthly} 元，需核实税前税后、工时、加班、合同和岗位真实性。`});
+  else if(maxMonthly>=30000)hits.push({level:2,text:`较高薪资：识别到月收入约 ${maxMonthly} 元，需核实是否真实到手、是否包含高强度加班或扣费。`});
+  else if(maxMonthly>=20000)hits.push({level:1,text:`薪资偏高：识别到月收入约 ${maxMonthly} 元，建议核实工资结构和扣费。`});
   return hits;
 }
 function checkRisk(){
-  const raw=(riskText.value||"").trim();
-  if(!raw){alert("请先粘贴招聘信息");return;}
-  const txt=normalizeMoneyText(raw);
-  riskCount++; localStorage.setItem("ow_risk_count",String(riskCount)); updateStats();
-
-  let points = 0;
-  let hits = [];
-  function add(level, title, msg){ points += level; hits.push({level, text:`${title}：${msg}`}); }
-
-  const kwRules = [
-    [4, "保证下签/保证录用", ["保证下签","包下签","百分百下签","100%下签","保证录用","包录取","稳赚"], "任何签证和录用都不应被绝对保证。"],
-    [4, "护照风险", ["护照交公司","保管护照","扣护照","押护照","统一保管护照"], "护照属于个人重要证件，交给他人保管风险很高。"],
-    [4, "黑工/非法风险", ["旅游签工作","黑工","不用签证","过去再说","落地安排","先过去再办"], "非法工作可能导致遣返、罚款、限制入境。"],
-    [3, "提前收费", ["押金","保证金","先交钱","先交","预交","定金","报名费","手续费","材料费"], "提前收费必须核实合同、收款主体、退款条款和机构资质。"],
-    [3, "无经验高薪", ["不需要经验","无需经验","无经验","零经验","小白可做"], "无经验却承诺高薪，需要重点核实岗位真实性和工作强度。"],
-    [2, "信息不透明", ["不方便说公司","到了再签","先别问","内部渠道","保密项目","名额有限"], "雇主、合同、签证、费用不透明是风险信号。"],
-    [2, "包吃住夸大", ["包吃住","全包","免费住宿","免费机票"], "包吃住不代表无扣费，需核实住宿标准、餐费、机票和工资扣除。"],
-    [2, "催促付款", ["今天截止","马上交","名额最后","过期没有","现在转账"], "催促付款容易制造紧迫感，应先核实再决定。"]
+  const raw=(riskText.value||"").trim(); if(!raw){alert("请先粘贴招聘信息");return;}
+  const txt=normalizeMoneyText(raw); riskCount++; localStorage.setItem("ow_risk_count",String(riskCount)); updateStats();
+  let points=0,hits=[]; function add(level,title,msg){points+=level;hits.push({level,text:`${title}：${msg}`});}
+  const kwRules=[
+    [4,"保证下签/保证录用",["保证下签","包下签","百分百下签","100%下签","保证录用","包录取","稳赚"],"任何签证和录用都不应被绝对保证。"],
+    [4,"护照风险",["护照交公司","保管护照","扣护照","押护照","统一保管护照"],"护照属于个人重要证件，交给他人保管风险很高。"],
+    [4,"黑工/非法风险",["旅游签工作","黑工","不用签证","过去再说","落地安排","先过去再办"],"非法工作可能导致遣返、罚款、限制入境。"],
+    [3,"提前收费",["押金","保证金","先交钱","先交","预交","定金","报名费","手续费","材料费"],"提前收费必须核实合同、收款主体、退款条款和机构资质。"],
+    [3,"无经验高薪",["不需要经验","无需经验","无经验","零经验","小白可做"],"无经验却承诺高薪，需要重点核实岗位真实性和工作强度。"],
+    [2,"信息不透明",["不方便说公司","到了再签","先别问","内部渠道","保密项目","名额有限"],"雇主、合同、签证、费用不透明是风险信号。"],
+    [2,"包吃住夸大",["包吃住","全包","免费住宿","免费机票"],"包吃住不代表无扣费，需核实住宿标准、餐费、机票和工资扣除。"],
+    [2,"催促付款",["今天截止","马上交","名额最后","过期没有","现在转账"],"催促付款容易制造紧迫感，应先核实再决定。"]
   ];
-  kwRules.forEach(r=>{ if(r[2].some(k=>txt.includes(k))) add(r[0], r[1], r[3]); });
-  extractSalaryRisk(txt).forEach(h=>{points += h.level; hits.push(h);});
-  if(/新加坡|日本|韩国|澳大利亚|加拿大|中东|沙特|迪拜|阿联酋|非洲/.test(txt) && !/签证|工签|准证|合同|雇主|公司/.test(txt)){
-    add(1, "关键信息不足", "提到了海外工作，但缺少签证、合同、雇主或准证信息。");
-  }
-
-  let level, label, action;
-  if(points >= 9){ level="高风险"; label="建议暂缓，不要付款，不要交护照"; action="先核实企业资质、雇主名称、合同主体、签证类型、费用明细、退款条款，并让懂行人士或正规机构复核。"; }
-  else if(points >= 5){ level="中高风险"; label="强烈建议核实后再继续"; action="重点核实工资是否真实到手、是否有提前收费、是否扣护照、合同和签证是否匹配。"; }
-  else if(points >= 2){ level="中风险/需核实"; label="不要只听口头承诺"; action="继续要求对方提供合同、雇主信息、工签类型、费用明细、住宿保险和成功案例。"; }
-  else { level="低风险/待核实"; label="暂未发现明显高危词"; action="仍需核实雇主、合同、签证、费用、保险和真实案例。"; }
-
-  const sorted = hits.sort((a,b)=>b.level-a.level);
+  kwRules.forEach(r=>{if(r[2].some(k=>txt.includes(k)))add(r[0],r[1],r[3]);});
+  extractSalaryRisk(txt).forEach(h=>{points+=h.level;hits.push(h);});
+  if(/新加坡|日本|韩国|澳大利亚|加拿大|中东|沙特|迪拜|阿联酋|非洲/.test(txt)&&!/签证|工签|准证|合同|雇主|公司/.test(txt))add(1,"关键信息不足","提到了海外工作，但缺少签证、合同、雇主或准证信息。");
+  let level,label,action;
+  if(points>=9){level="高风险";label="建议暂缓，不要付款，不要交护照";action="先核实企业资质、雇主名称、合同主体、签证类型、费用明细、退款条款，并让懂行人士或正规机构复核。";}
+  else if(points>=5){level="中高风险";label="强烈建议核实后再继续";action="重点核实工资是否真实到手、是否有提前收费、是否扣护照、合同和签证是否匹配。";}
+  else if(points>=2){level="中风险/需核实";label="不要只听口头承诺";action="继续要求对方提供合同、雇主信息、工签类型、费用明细、住宿保险和成功案例。";}
+  else{level="低风险/待核实";label="暂未发现明显高危词";action="仍需核实雇主、合同、签证、费用、保险和真实案例。";}
+  const sorted=hits.sort((a,b)=>b.level-a.level);
   riskResult.textContent=`【风险等级】${level}\n【处理建议】${label}\n\n【发现的问题】\n${sorted.length?sorted.map(h=>"- "+h.text).join("\n"):"未识别到明显高危词。"}\n\n【下一步建议】\n${action}\n\n【必须核实清单】\n1. 雇主名称、注册地址、联系人身份\n2. 签证/工签/准证类型，是否允许合法工作\n3. 合同主体、工资支付方式、税前税后、加班费\n4. 是否有押金、服务费、培训费，退款条款是什么\n5. 住宿、保险、休假、医疗、回国机制\n6. 是否要求扣押护照或证件\n7. 是否有正规资质、真实项目和可核实案例\n\n【底线提醒】\n不要轻易转账，不要交护照原件，不要相信“保证下签/包录用/无经验高薪”。`;
 }
 function genResume(){
-  const name=rName.value||"姓名", age=rAge.value||"未填写", country=rCountry.value||"海外", job=rJob.value||"目标岗位", years=rYears.value||"多年", skills=rSkills.value||"技能未填写", exp=rExp.value||"工作经历未填写";
+  const name=rName.value||"姓名",age=rAge.value||"未填写",country=rCountry.value||"海外",job=rJob.value||"目标岗位",years=rYears.value||"多年",skills=rSkills.value||"技能未填写",exp=rExp.value||"工作经历未填写";
   resumeResult.textContent=`【中文简历摘要】\n姓名：${name}\n年龄：${age}\n目标国家：${country}\n目标岗位：${job}\n工作年限：${years}\n核心技能：${skills}\n工作经历：${exp}\n\n【英文简历摘要】\nName: ${name}\nAge: ${age}\nTarget Country: ${country}\nTarget Position: ${job}\nExperience: ${years}\nKey Skills: ${skills}\nWork Experience: ${exp}\n\n【英文求职信】\nDear Hiring Manager,\n\nI am interested in the position of ${job} in ${country}. I have ${years} of relevant work experience. My skills include ${skills}. In my previous work, I was mainly responsible for ${exp}.\n\nI am hardworking, responsible, and willing to follow company rules and safety requirements. I hope to have the opportunity to discuss this position with you.\n\nBest regards,\n${name}\n\n【WhatsApp联系话术】\nHello, I am ${name} from China. I am interested in the ${job} position in ${country}. I have ${years} of experience. Could you please send me the job details, salary, contract, visa type, accommodation, insurance, and total fees? Thank you.`;
 }
 function renderGuides(){guideList.innerHTML=GUIDES.map(g=>`<div class="card"><h2>${g.title}</h2><p>${g.body}</p></div>`).join("");}
 
 function collectApply(){
-  return {
-    name:aName.value.trim(),
-    contact:aContact.value.trim(),
-    age:aAge.value.trim(),
-    city:aCity.value.trim(),
-    passport:aPassport.value,
-    country:aCountry.value.trim(),
-    skill:aSkill.value.trim(),
-    experience:aExp.value.trim(),
-    note:aNote.value.trim(),
-    source:"web-v2"
-  };
+  const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
+  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.1",status:"未联系",admin_note:""};
 }
 async function saveApply(){
-  const item = collectApply();
-  if(!item.name || !item.contact){alert("请填写姓名和联系方式");return;}
-  submitBtn.disabled = true;
-  submitBtn.textContent = "提交中...";
+  const item=collectApply(); if(!item.name||!item.contact){alert("请填写姓名和联系方式");return;}
+  submitBtn.disabled=true; submitBtn.textContent="提交中...";
   try{
-    if(cloudReady && sb){
-      const { error } = await sb.from(TABLE_NAME).insert([item]);
-      if(error) throw error;
-      alert("已提交成功，数据已保存到云端后台。");
-    }else{
-      throw new Error("Supabase 未配置");
-    }
+    if(cloudReady&&sb){const {error}=await sb.from(TABLE_NAME).insert([item]); if(error)throw error; alert("已提交成功，客服后台已收到。");}
+    else throw new Error("Supabase 未配置");
   }catch(e){
-    const localItem = {...item, created_at:new Date().toISOString(), local_only:true};
-    localFallback.unshift(localItem);
-    localStorage.setItem("ow_v2_local_fallback", JSON.stringify(localFallback));
-    alert("云端保存失败，已先保存到本机兜底记录。原因：" + (e.message || e));
+    const localItem={...item,created_at:new Date().toISOString(),local_only:true};
+    localFallback.unshift(localItem); localStorage.setItem("ow_v21_local_fallback",JSON.stringify(localFallback));
+    alert("云端保存失败，已先保存到本机兜底记录。原因："+(e.message||e));
   }finally{
-    submitBtn.disabled = false;
-    submitBtn.textContent = "提交申请";
-    ["aName","aContact","aAge","aCity","aCountry","aSkill","aExp","aNote"].forEach(id=>document.getElementById(id).value="");
+    submitBtn.disabled=false; submitBtn.textContent="提交申请";
+    ["aName","aContact","aAge","aCity","aCountry","aSkill","aSalary","aExp","aNote"].forEach(id=>document.getElementById(id).value="");
     updateStats();
   }
 }
-
 function showAdmin(){
-  if(adminOK){
-    adminLogin.classList.add("hide");
-    adminPanel.classList.remove("hide");
-    adminCloudTip.textContent = cloudReady ? "云端后台：已连接 Supabase。点击“刷新云端数据”查看所有申请。" : "云端后台：未配置 Supabase，只能查看本机兜底记录。";
-    loadCloudApplies();
-  }else{
-    adminLogin.classList.remove("hide");
-    adminPanel.classList.add("hide");
-  }
+  if(adminOK){adminLogin.classList.add("hide");adminPanel.classList.remove("hide");adminCloudTip.textContent=cloudReady?"云端后台：已连接 Supabase。点击“刷新云端数据”查看所有申请。":"云端后台：未配置 Supabase，只能查看本机兜底记录。";loadCloudApplies();}
+  else{adminLogin.classList.remove("hide");adminPanel.classList.add("hide");}
 }
-function loginAdmin(){
-  if(adminPass.value === ADMIN_PASSWORD){
-    adminOK = true;
-    sessionStorage.setItem("ow_admin_ok","1");
-    adminPass.value="";
-    showAdmin();
-  }else alert("密码不正确");
-}
-function logoutAdmin(){
-  adminOK=false;
-  sessionStorage.removeItem("ow_admin_ok");
-  showAdmin();
-}
+function loginAdmin(){if(adminPass.value===ADMIN_PASSWORD){adminOK=true;sessionStorage.setItem("ow_admin_ok","1");adminPass.value="";showAdmin();}else alert("密码不正确");}
+function logoutAdmin(){adminOK=false;sessionStorage.removeItem("ow_admin_ok");showAdmin();}
 async function loadCloudApplies(){
-  if(!adminOK) return;
-  if(!cloudReady || !sb){
-    applies = localFallback;
-    renderApplies();
-    updateStats();
-    return;
-  }
-  applyList.innerHTML = "<p class='small'>正在读取云端数据...</p>";
-  const { data, error } = await sb.from(TABLE_NAME).select("*").order("created_at", { ascending:false }).limit(500);
-  if(error){
-    applyList.innerHTML = "<div class='dangerBox'>读取云端失败：" + error.message + "<br>已显示本机兜底记录。</div>";
-    applies = localFallback;
-  }else{
-    applies = data || [];
-  }
-  renderApplies();
-  updateStats();
+  if(!adminOK)return;
+  if(!cloudReady||!sb){applies=localFallback;renderApplies();updateStats();return;}
+  applyList.innerHTML="<p class='small'>正在读取云端数据...</p>";
+  const {data,error}=await sb.from(TABLE_NAME).select("*").order("created_at",{ascending:false}).limit(500);
+  if(error){applyList.innerHTML="<div class='dangerBox'>读取云端失败："+error.message+"<br>已显示本机兜底记录。</div>";applies=localFallback;}
+  else applies=data||[];
+  renderApplies(); updateStats();
+}
+function statusTag(s){
+  const map={"未联系":"yellow","已联系":"purple","有意向":"green","已推荐":"green","无效":"red"};
+  return `<span class="tag ${map[s]||""}">${s||"未联系"}</span>`;
 }
 function renderApplies(){
-  const c=(filterCountry?.value||"").toLowerCase();
-  const s=(filterSkill?.value||"").toLowerCase();
-  const p=(filterPassport?.value||"");
-  const data=applies.filter(a=>
-    (!c || String(a.country||"").toLowerCase().includes(c)) &&
-    (!s || String(a.skill||"").toLowerCase().includes(s)) &&
-    (!p || a.passport===p)
-  );
-  applyList.innerHTML=data.map((a,i)=>`<div class="job"><h3>${a.name || ""} · ${a.skill||"未填工种"}</h3><span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}<p><b>时间：</b>${fmtTime(a.created_at)}</p><p><b>联系：</b>${a.contact||""}</p><p><b>年龄/所在地：</b>${a.age||""} / ${a.city||""}</p><p><b>经验：</b>${a.experience||a.exp||""}</p><p><b>备注：</b>${a.note||""}</p>${a.id?`<button class="danger" onclick="deleteCloudApply('${a.id}')">删除云端记录</button>`:""}</div>`).join("") || "<p class='small'>暂无申请记录。</p>";
+  const c=(filterCountry?.value||"").toLowerCase(), s=(filterSkill?.value||"").toLowerCase(), st=(filterStatus?.value||"");
+  const data=applies.filter(a=>(!c||String(a.country||"").toLowerCase().includes(c))&&(!s||String(a.skill||"").toLowerCase().includes(s))&&(!st||(a.status||"未联系")===st));
+  applyList.innerHTML=data.map((a,i)=>`<div class="job"><h3>${a.name||""} · ${a.skill||"未填工种"}</h3><span class="tag">${a.country||"未填国家"}</span><span class="tag">${a.passport||""}</span>${a.local_only?'<span class="tag yellow">本地兜底</span>':'<span class="tag">云端</span>'}${statusTag(a.status||"未联系")}<p><b>时间：</b>${fmtTime(a.created_at)}</p><p><b>联系：</b>${a.contact||""}</p><p><b>年龄/所在地：</b>${a.age||""} / ${a.city||""}</p><p><b>经验：</b>${String(a.experience||a.exp||"").replace(/\n/g,"<br>")}</p><p><b>客户备注：</b>${a.note||""}</p><p><b>跟进备注：</b>${a.admin_note||""}</p>${a.id?`<div class="toolbar"><select id="status_${a.id}"><option ${sel(a.status,"未联系")}>未联系</option><option ${sel(a.status,"已联系")}>已联系</option><option ${sel(a.status,"有意向")}>有意向</option><option ${sel(a.status,"已推荐")}>已推荐</option><option ${sel(a.status,"无效")}>无效</option></select><input id="note_${a.id}" placeholder="跟进备注" value="${escapeAttr(a.admin_note||"")}"><button class="gold" onclick="updateApplyStatus('${a.id}')">保存跟进</button><button class="danger" onclick="deleteCloudApply('${a.id}')">删除</button></div>`:""}</div>`).join("")||"<p class='small'>暂无申请记录。</p>";
 }
-function fmtTime(t){ try{return t ? new Date(t).toLocaleString() : ""}catch(e){return t||""} }
+function sel(a,b){return (a||"未联系")===b?"selected":""}
+function escapeAttr(v){return String(v).replace(/"/g,"&quot;")}
+function fmtTime(t){try{return t?new Date(t).toLocaleString():""}catch(e){return t||""}}
+async function updateApplyStatus(id){
+  if(!cloudReady||!sb){alert("云端未连接");return;}
+  const status=document.getElementById("status_"+id).value;
+  const admin_note=document.getElementById("note_"+id).value;
+  const {error}=await sb.from(TABLE_NAME).update({status,admin_note}).eq("id",id);
+  if(error)alert("保存失败："+error.message);else{alert("已保存跟进状态");loadCloudApplies();}
+}
 async function deleteCloudApply(id){
-  if(!confirm("确定删除这条云端记录？")) return;
-  if(!cloudReady || !sb){alert("云端未连接");return;}
-  const { error } = await sb.from(TABLE_NAME).delete().eq("id", id);
-  if(error) alert("删除失败：" + error.message);
-  else { alert("已删除"); loadCloudApplies(); }
+  if(!confirm("确定删除这条云端记录？"))return;
+  if(!cloudReady||!sb){alert("云端未连接");return;}
+  const {error}=await sb.from(TABLE_NAME).delete().eq("id",id);
+  if(error)alert("删除失败："+error.message);else{alert("已删除");loadCloudApplies();}
 }
 async function syncLocalToCloud(){
-  if(!cloudReady || !sb){alert("Supabase 未配置，不能补传");return;}
+  if(!cloudReady||!sb){alert("Supabase 未配置，不能补传");return;}
   if(!localFallback.length){alert("没有本地兜底记录");return;}
-  const rows = localFallback.map(x=>({
-    name:x.name, contact:x.contact, age:x.age, city:x.city, passport:x.passport,
-    country:x.country, skill:x.skill, experience:x.experience||x.exp, note:x.note, source:"web-v2-local-sync"
-  }));
-  const { error } = await sb.from(TABLE_NAME).insert(rows);
-  if(error){alert("补传失败：" + error.message);return;}
-  localFallback=[];
-  localStorage.setItem("ow_v2_local_fallback","[]");
-  alert("补传成功，本地兜底记录已清空");
-  loadCloudApplies();
+  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.1-local-sync",status:x.status||"未联系",admin_note:x.admin_note||""}));
+  const {error}=await sb.from(TABLE_NAME).insert(rows);
+  if(error){alert("补传失败："+error.message);return;}
+  localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");alert("补传成功，本地兜底记录已清空");loadCloudApplies();
 }
-function clearLocalApplies(){
-  if(confirm("确定清空本机兜底记录？不会删除云端数据。")){
-    localFallback=[];
-    localStorage.setItem("ow_v2_local_fallback","[]");
-    if(!cloudReady){applies=[];renderApplies();}
-    updateStats();
-  }
-}
-function exportData(){
-  const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2"};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2数据.json";a.click();
-}
-function csvEscape(v){ v = String(v ?? ""); return '"' + v.replace(/"/g,'""').replace(/\n/g,' ') + '"';}
+function clearLocalApplies(){if(confirm("确定清空本机兜底记录？不会删除云端数据。")){localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");if(!cloudReady){applies=[];renderApplies();}updateStats();}}
+function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.1"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
+function csvEscape(v){v=String(v??"");return '"'+v.replace(/"/g,'""').replace(/\n/g,' ')+'"';}
 function exportCSV(){
-  const headers=["时间","姓名","联系方式","年龄","所在地","护照","想去国家","工种技能","工作经验","备注","来源"];
-  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.age,a.city,a.passport,a.country,a.skill,a.experience||a.exp,a.note,a.local_only?"本地兜底":"云端"]);
-  const csv="\ufeff"+[headers, ...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.csv";a.click();
+  const headers=["时间","姓名","联系方式","年龄","所在地","护照","想去国家","工种技能","工作经验","客户备注","跟进状态","跟进备注","来源"];
+  const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.age,a.city,a.passport,a.country,a.skill,a.experience||a.exp,a.note,a.status||"未联系",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
+  const csv="\ufeff"+[headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.1.csv";a.click();
 }
 
+initContacts();
 initCountries();
 initSupabase();
 renderJobs();
 renderGuides();
 updateStats();
+if(location.search.includes("admin=1")) openAdmin();
 if(cloudReady){ loadCloudApplies(); }
 </script>
 </body>
