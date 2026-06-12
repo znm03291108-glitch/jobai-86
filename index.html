@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2.2</title>
+  <title>出海工作资源助手 V2.3</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -56,6 +56,13 @@
     .steps p{margin:8px 0;padding-left:32px;position:relative}
     .steps p:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:2px;background:#1578ff;color:white;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:800}
     .admin-mini{opacity:.45;font-size:12px;text-decoration:underline;cursor:pointer;margin-top:18px;display:inline-block}
+    .platform-section{margin-top:16px}
+    .info-list{display:grid;gap:10px}
+    .info-item{padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.035)}
+    .info-item b{display:block;margin-bottom:5px;color:#fff}
+    .mini-card{background:rgba(21,120,255,.08);border:1px solid rgba(21,120,255,.18);border-radius:14px;padding:12px}
+    .scam{border-left:4px solid #df3f45}
+    .check{border-left:4px solid #14945b}
     code{background:rgba(255,255,255,.08);padding:2px 5px;border-radius:6px}
     @media(max-width:880px){.grid,.grid3{grid-template-columns:1fr}.kpi{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}}
   </style>
@@ -63,9 +70,9 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2.2 · 正式推广优化版</span>
-    <h1>海外工作信息整理、防骗检测、求职资料生成、正规资源对接</h1>
-    <p class="sub">面向想了解海外工作机会的中国求职者。平台提供岗位信息整理、风险提示、简历/话术工具和咨询留资；不承诺录用，不保证签证，不收押金，不做非法劳务。</p>
+    <span class="badge">出海工作资源助手 V2.3 · 正式推广优化版</span>
+    <h1>海外工作信息服务平台：岗位方向、国家指南、避坑知识、求职资料</h1>
+    <p class="sub">面向焊工、电工、司机、厨师、机械维修、工程项目人员等，提供海外岗位信息整理、招聘风险识别、国家流程指南、求职资料生成和正规资源咨询。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
     <div class="nav" id="publicNav">
       <button onclick="showTab('home')">首页</button>
@@ -88,9 +95,55 @@
     </div>
 
     <div class="grid3">
-      <div class="card"><h2>热门国家</h2><p>新加坡、日本、中东、非洲、澳大利亚、加拿大、远程岗位。先帮你看清流程和风险，再决定是否继续。</p><button onclick="showTab('jobs')">查看岗位方向</button></div>
-      <div class="card"><h2>适合人群</h2><p>焊工、电工、司机、厨师、机械维修、工程项目人员、仓库工、工厂工、护理/介护、跨境客服等。</p><button onclick="showTab('apply')">提交咨询</button></div>
-      <div class="card"><h2>防骗优先</h2><p>重点识别异常高薪、提前收费、保证下签、扣护照、黑工、合同不清楚、雇主不透明等风险。</p><button onclick="showTab('risk')">检测招聘信息</button></div>
+      <div class="card"><h2>最新岗位信息</h2><p>首页直接展示热门岗位方向：新加坡厨师、中东焊工、非洲矿山司机、日本食品加工、澳洲农场工等。</p><button onclick="document.getElementById('latestJobs').scrollIntoView({behavior:'smooth'})">查看最新岗位</button></div>
+      <div class="card"><h2>出国避坑知识</h2><p>先看清高薪、押金、护照、合同、签证、费用等关键风险，再决定是否继续沟通。</p><button onclick="document.getElementById('avoidTips').scrollIntoView({behavior:'smooth'})">查看避坑知识</button></div>
+      <div class="card"><h2>免费初步咨询</h2><p>提交国家、工种、证书、工资预期和工作经验，后台可统一跟进和标记客户状态。</p><button onclick="showTab('apply')">提交咨询</button></div>
+    </div>
+
+    <div id="latestJobs" class="card platform-section">
+      <h2>最新岗位信息方向</h2>
+      <p class="small">以下为岗位方向信息，正式申请前必须核实雇主、合同、签证、费用、保险和资质。</p>
+      <div class="info-list" id="latestJobCards"></div>
+    </div>
+
+    <div id="avoidTips" class="grid platform-section">
+      <div class="card">
+        <h2>出国工作前必须知道</h2>
+        <div class="info-list">
+          <div class="info-item check"><b>1. 高薪不等于真实到手</b>需要核实税前税后、工时、加班、住宿餐费和扣费。</div>
+          <div class="info-item check"><b>2. 不建议提前交押金</b>任何押金、保证金、培训费、服务费都要看合同主体和退款条款。</div>
+          <div class="info-item check"><b>3. 不要交护照原件</b>护照属于个人重要证件，交给陌生机构或雇主保管风险很高。</div>
+          <div class="info-item check"><b>4. 签证类型必须允许工作</b>旅游签工作、黑工、过去再办，风险极高。</div>
+          <div class="info-item check"><b>5. 合同和费用必须写清楚</b>工资、岗位、地点、保险、住宿、机票、休假都要明确。</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>常见骗局揭秘</h2>
+        <div class="info-list">
+          <div class="info-item scam"><b>保证下签骗局</b>任何签证都不应被绝对保证。</div>
+          <div class="info-item scam"><b>押金/保证金骗局</b>先交钱再安排，容易出现退款难。</div>
+          <div class="info-item scam"><b>护照保管骗局</b>要求交护照原件，要高度警惕。</div>
+          <div class="info-item scam"><b>旅游签黑工骗局</b>可能导致遣返、罚款、限制入境。</div>
+          <div class="info-item scam"><b>超高薪诱导骗局</b>无经验却高薪，往往隐藏扣费或虚假岗位。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card platform-section">
+      <h2>国家/地区工作指南</h2>
+      <div class="grid3" id="homeGuideCards"></div>
+    </div>
+
+    <div class="card platform-section">
+      <h2>求职准备清单</h2>
+      <div class="grid3">
+        <div class="mini-card"><b>基础资料</b><p>护照、身份证、个人简历、紧急联系人。</p></div>
+        <div class="mini-card"><b>工作证明</b><p>工作年限、项目经验、推荐人、过往岗位说明。</p></div>
+        <div class="mini-card"><b>技能证书</b><p>焊工证、电工证、叉车证、驾驶证、厨师证等。</p></div>
+        <div class="mini-card"><b>健康与记录</b><p>体检、无犯罪记录、疫苗/健康要求视国家而定。</p></div>
+        <div class="mini-card"><b>合同核实</b><p>工资、工时、住宿、保险、机票、休假、扣费。</p></div>
+        <div class="mini-card"><b>预算准备</b><p>不要只听口头报价，要确认每一项费用和退款条件。</p></div>
+      </div>
     </div>
 
     <div class="grid" style="margin-top:16px">
@@ -222,7 +275,7 @@
   <section id="admin" class="tab hide">
     <div id="adminLogin" class="card locked">
       <h2>管理员登录</h2>
-      <p class="small">请输入管理员密码进入后台。</p>
+      <p class="small">后台入口已隐藏。默认密码：123456。正式推广前建议在代码里修改 <code>ADMIN_PASSWORD</code>。</p>
       <label>后台密码</label>
       <input id="adminPass" type="password" placeholder="请输入后台密码"/>
       <button onclick="loginAdmin()">进入后台</button>
@@ -253,9 +306,9 @@
 </main>
 
 <footer>
-  出海工作资源助手 V2.2 · 客户跟进增强版 / 一键复制 / 客户标签
+  出海工作资源助手 V2.3 · 专业信息平台版 / 岗位信息 / 避坑指南
   <br>
-  <span class="admin-mini hide" onclick="openAdmin()">管理入口</span>
+  <span class="admin-mini" onclick="openAdmin()">管理入口</span>
 </footer>
 
 <script>
@@ -264,7 +317,7 @@
    ========================= */
 const SUPABASE_URL = "https://rcwuftrhdcputrmjqaed.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Phb6AdsY4s_dfJCTOC7Kvw_4b33w3LM";
-const ADMIN_PASSWORD = "znm03291108";
+const ADMIN_PASSWORD = "123456";
 const TABLE_NAME = "applications";
 
 /* 客服联系方式：改成你自己的 */
@@ -311,6 +364,27 @@ const GUIDES = [
   {title:"海外招聘防骗清单", body:"凡是保证下签、提前高额押金、要求交护照、合同模糊、工资远高于市场、不提供雇主信息的，都要高度警惕。"},
   {title:"出国前资料清单", body:"护照、无犯罪/体检、技能证书、工作证明、简历、合同、保险、紧急联系人、雇主信息、签证材料、费用明细。"}
 ];
+
+const LATEST_JOBS = [
+  {country:"新加坡", title:"厨师/帮厨", salary:"参考 9000-16000/月", req:"餐饮经验优先，需核实准证、住宿、工时、休息日。"},
+  {country:"中东", title:"工程项目焊工", salary:"按项目合同", req:"有焊工证和项目经验更合适，必须核实安全、保险、护照保管。"},
+  {country:"非洲", title:"矿山/工程项目司机", salary:"按项目合同", req:"适合有驾驶和项目经验人员，重点核实安全环境和工资结算。"},
+  {country:"日本", title:"食品加工/工厂岗位", salary:"按当地合同", req:"通常需要签证路径和语言要求，警惕高额培训费。"},
+  {country:"澳大利亚", title:"农场工/季节工", salary:"按当地法规", req:"重点核实签证类别、合法雇主、住宿交通和税务。"},
+  {country:"加拿大", title:"技术工方向", salary:"按岗位省份", req:"周期较长，警惕保证移民、保证高薪、先收费。"},
+  {country:"远程", title:"中文客服/跨境电商", salary:"按项目结算", req:"低成本尝试可以，严防刷单、垫资、押金骗局。"},
+  {country:"中东", title:"机械维修/设备维修", salary:"按项目合同", req:"适合工程机械、矿山设备维修人员，核实项目地点和休假制度。"}
+];
+
+const GUIDE_DETAILS = [
+  {title:"新加坡工作指南", jobs:"厨师、帮厨、建筑、装修、司机、清洁、服务业。", req:"重点看准证类型、雇主信息、住宿、加班费、合同主体。", risk:"警惕高薪包下签、提前收押金、不说明准证类型。", ask:"准证是什么？雇主是谁？住宿扣多少钱？每月休几天？"},
+  {title:"日本工作指南", jobs:"食品加工、介护、工厂、农业、特定技能方向。", req:"通常需要语言、技能考试或正规签证路径。", risk:"警惕借培训名义高收费、保证下签、合同不透明。", ask:"签证类别是什么？是否需要日语？费用包含哪些？失败能否退款？"},
+  {title:"中东工程项目指南", jobs:"焊工、电工、司机、机械维修、工程项目人员。", req:"重点看合同、保险、安全、休假、工资结算和护照保管。", risk:"警惕交护照、项目地点不清、工资支付不清。", ask:"项目在哪里？是否买保险？护照谁保管？工资怎么发？"},
+  {title:"非洲矿山项目指南", jobs:"矿山司机、维修、电工、焊工、设备操作。", req:"适合能接受项目制和驻地管理的人。", risk:"重点注意安全、医疗、回国休假、工资结算。", ask:"是否有驻地管理？医疗怎么处理？多久休假？安全措施有哪些？"},
+  {title:"澳大利亚农场工指南", jobs:"农场、采摘、包装、季节性工作。", req:"要核实合法签证、雇主、住宿交通和税务。", risk:"警惕黑工、超高薪、先交中介费。", ask:"签证是否允许工作？工资按小时还是计件？住宿交通如何收费？"},
+  {title:"远程岗位指南", jobs:"中文客服、跨境电商、运营助理、资料整理。", req:"适合先低成本试，但要保护个人信息和资金。", risk:"刷单、垫资、代收款、刷流水都是高风险。", ask:"是否需要垫钱？是否要求银行卡收款？合同主体是谁？"}
+];
+
 
 let applies = [];
 let localFallback = JSON.parse(localStorage.getItem("ow_v21_local_fallback") || "[]");
@@ -393,7 +467,24 @@ function genResume(){
   const name=rName.value||"姓名",age=rAge.value||"未填写",country=rCountry.value||"海外",job=rJob.value||"目标岗位",years=rYears.value||"多年",skills=rSkills.value||"技能未填写",exp=rExp.value||"工作经历未填写";
   resumeResult.textContent=`【中文简历摘要】\n姓名：${name}\n年龄：${age}\n目标国家：${country}\n目标岗位：${job}\n工作年限：${years}\n核心技能：${skills}\n工作经历：${exp}\n\n【英文简历摘要】\nName: ${name}\nAge: ${age}\nTarget Country: ${country}\nTarget Position: ${job}\nExperience: ${years}\nKey Skills: ${skills}\nWork Experience: ${exp}\n\n【英文求职信】\nDear Hiring Manager,\n\nI am interested in the position of ${job} in ${country}. I have ${years} of relevant work experience. My skills include ${skills}. In my previous work, I was mainly responsible for ${exp}.\n\nI am hardworking, responsible, and willing to follow company rules and safety requirements. I hope to have the opportunity to discuss this position with you.\n\nBest regards,\n${name}\n\n【WhatsApp联系话术】\nHello, I am ${name} from China. I am interested in the ${job} position in ${country}. I have ${years} of experience. Could you please send me the job details, salary, contract, visa type, accommodation, insurance, and total fees? Thank you.`;
 }
-function renderGuides(){guideList.innerHTML=GUIDES.map(g=>`<div class="card"><h2>${g.title}</h2><p>${g.body}</p></div>`).join("");}
+
+function renderLatestJobs(){
+  const box=document.getElementById("latestJobCards");
+  if(!box) return;
+  box.innerHTML=LATEST_JOBS.map(j=>`<div class="info-item"><b>${j.country}｜${j.title}</b><span class="tag">${j.salary}</span><p>${j.req}</p><button onclick="quickApply('${j.country}','${j.title}')">咨询这个岗位</button></div>`).join("");
+}
+function renderHomeGuides(){
+  const box=document.getElementById("homeGuideCards");
+  if(!box) return;
+  box.innerHTML=GUIDE_DETAILS.map(g=>`<div class="mini-card"><h3>${g.title}</h3><p><b>适合岗位：</b>${g.jobs}</p><p><b>常见风险：</b>${g.risk}</p><button onclick="showGuideDetail('${g.title}')">查看详情</button></div>`).join("");
+}
+function showGuideDetail(title){
+  showTab("guides");
+  setTimeout(()=>{ const el=[...document.querySelectorAll("#guideList .card h2")].find(x=>x.textContent===title); if(el) el.scrollIntoView({behavior:"smooth"}); },100);
+}
+function renderGuides(){
+  guideList.innerHTML=GUIDE_DETAILS.map(g=>`<div class="card"><h2>${g.title}</h2><p><b>适合岗位：</b>${g.jobs}</p><p><b>基本要求：</b>${g.req}</p><p><b>常见风险：</b>${g.risk}</p><p><b>咨询前要问清楚：</b>${g.ask}</p><button onclick="showTab('apply')">我要咨询</button></div>`).join("");
+}
 
 function collectApply(){
   const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n证书情况：${aCertificate.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
@@ -514,6 +605,8 @@ initCountries();
 initSupabase();
 renderJobs();
 renderGuides();
+renderLatestJobs();
+renderHomeGuides();
 updateStats();
 if(location.search.includes("admin=1")) openAdmin();
 if(cloudReady){ loadCloudApplies(); }
