@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2.4</title>
+  <title>出海工作资源助手 V2.5</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -74,10 +74,13 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2.4 · 正式推广优化版</span>
+    <span class="badge">出海工作资源助手 V2.5 · 正式推广优化版</span>
     <h1>海外工作信息服务平台：岗位方向、国家指南、避坑知识、求职资料</h1>
     <p class="sub">面向焊工、电工、司机、厨师、机械维修、工程项目人员等，提供海外岗位信息整理、招聘风险识别、国家流程指南、求职资料生成和正规资源咨询。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
+    <div class="warning" style="margin-top:12px">
+      合规声明：本平台仅提供海外工作信息整理、风险提示、求职资料制作和咨询线索收集；不是招聘中介，不从事对外劳务派遣，不承诺录用，不保证签证，不收押金。
+    </div>
     <div class="nav" id="publicNav">
       <button onclick="showTab('home')">首页</button>
       <button class="secondary" onclick="showTab('jobs')">岗位资源</button>
@@ -85,6 +88,8 @@
       <button class="secondary" onclick="showTab('resume')">AI简历</button>
       <button class="secondary" onclick="showTab('guides')">国家指南</button>
       <button class="secondary" onclick="showTab('services')">付费服务</button>
+      <button class="secondary" onclick="showTab('compliance')">合规说明</button>
+      <button class="secondary" onclick="showTab('privacy')">隐私政策</button>
       <button class="secondary" onclick="showTab('apply')">免费咨询</button>
     </div>
   </div>
@@ -100,15 +105,15 @@
     </div>
 
     <div class="grid3">
-      <div class="card"><h2>最新岗位信息</h2><p>首页直接展示热门岗位方向：新加坡厨师、中东焊工、非洲矿山司机、日本食品加工、澳洲农场工等。</p><button onclick="document.getElementById('latestJobs').scrollIntoView({behavior:'smooth'})">查看最新岗位</button></div>
+      <div class="card"><h2>岗位方向示例</h2><p>首页展示常见岗位方向示例：新加坡厨师、中东焊工、非洲矿山司机、日本食品加工、澳洲农场工等。</p><button onclick="document.getElementById('latestJobs').scrollIntoView({behavior:'smooth'})">查看岗位方向</button></div>
       <div class="card"><h2>出国避坑知识</h2><p>先看清高薪、押金、护照、合同、签证、费用等关键风险，再决定是否继续沟通。</p><button onclick="document.getElementById('avoidTips').scrollIntoView({behavior:'smooth'})">查看避坑知识</button></div>
       <div class="card"><h2>免费初步咨询</h2><p>提交国家、工种、证书、工资预期和工作经验，后台可统一跟进和标记客户状态。</p><button onclick="showTab('apply')">提交咨询</button></div>
       <div class="card"><h2>资料服务</h2><p>提供简历、求职信、联系话术、风险报告等资料整理服务，不卖岗位、不保签证。</p><button onclick="showTab('services')">查看付费服务</button></div>
     </div>
 
     <div id="latestJobs" class="card platform-section">
-      <h2>最新岗位信息方向</h2>
-      <p class="small">以下为岗位方向信息，正式申请前必须核实雇主、合同、签证、费用、保险和资质。</p>
+      <h2>岗位方向示例</h2>
+      <p class="small">以下内容为海外工作常见岗位方向示例，不代表当前真实在招岗位。正式申请前必须核实雇主、合同、签证、费用、保险、机构资质和岗位真实性。</p>
       <div class="info-list" id="latestJobCards"></div>
     </div>
 
@@ -244,7 +249,7 @@
   <section id="services" class="tab hide">
     <div class="card">
       <h2>付费服务入口</h2>
-      <p class="sub">说明：以下服务只做信息整理、求职资料制作、风险提示和咨询沟通，不承诺录用，不保证签证，不收押金，不代办非法劳务。</p>
+      <p class="sub">说明：以下服务仅为资料整理、风险提示、求职资料制作和咨询沟通服务；不是招聘中介服务，不出售岗位，不承诺录用，不保证签证，不收押金，不代办非法劳务。</p>
       <div class="grid3" style="margin-top:14px">
         <div class="card service-card">
           <h2>基础资料包</h2>
@@ -298,6 +303,72 @@
     </div>
   </section>
 
+
+  <section id="compliance" class="tab hide">
+    <div class="card">
+      <h2>平台合规说明</h2>
+      <div class="dangerBox">
+        <b>重要边界：</b>本平台不是招聘中介，不从事对外劳务派遣，不代办签证，不收取押金，不承诺安排工作，不保证录用和签证结果。
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <div class="card">
+          <h2>我们提供什么</h2>
+          <div class="info-list">
+            <div class="info-item check"><b>信息整理</b>整理常见海外工作方向、国家流程、材料清单。</div>
+            <div class="info-item check"><b>风险提示</b>提示高薪、押金、护照、签证、合同、黑工等风险。</div>
+            <div class="info-item check"><b>求职资料</b>生成简历、求职信、联系话术、咨询清单。</div>
+            <div class="info-item check"><b>咨询留资</b>收集用户意向，方便后续沟通。</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>我们不做什么</h2>
+          <div class="info-list">
+            <div class="info-item scam"><b>不承诺录用</b>任何岗位录用以真实雇主和合法合同为准。</div>
+            <div class="info-item scam"><b>不保证签证</b>签证结果由相关国家/地区主管机构决定。</div>
+            <div class="info-item scam"><b>不收押金</b>不以保证安排、保证下签名义收取押金。</div>
+            <div class="info-item scam"><b>不发布黑工</b>不提供旅游签打工、非法滞留等信息。</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h2>正规资质核实建议</h2>
+        <p>如涉及对外劳务合作、出国劳务派遣、签证办理或收费服务，请优先核实对方是否具备相应经营资格，并通过官方公开渠道核实企业信息。</p>
+        <p class="small">你应重点核实：企业名称、统一社会信用代码、营业执照、对外劳务合作经营资格、合同主体、签证类型、费用明细、退款条款、雇主信息、保险和劳动保障。</p>
+      </div>
+      <div class="warning" style="margin-top:14px">
+        务必提醒：不要随意交护照原件；不要相信“保证下签、包录用、无经验高薪”；不要持旅游签或商务签从事非法工作。
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" class="tab hide">
+    <div class="card">
+      <h2>隐私政策与信息删除</h2>
+      <p class="sub">本页面说明我们收集哪些信息、用于什么目的、如何保存以及如何申请删除。</p>
+      <div class="grid">
+        <div class="card">
+          <h2>收集的信息</h2>
+          <p>姓名、联系方式、年龄、所在地、护照状态、意向国家、工种技能、证书情况、期望工资、工作经验、备注、咨询服务和付款状态。</p>
+        </div>
+        <div class="card">
+          <h2>使用目的</h2>
+          <p>仅用于海外工作信息咨询、风险提示、求职资料整理、客户跟进和服务交付，不会在前台公开展示。</p>
+        </div>
+        <div class="card">
+          <h2>保存方式</h2>
+          <p>信息保存于 Supabase 云端数据库和必要的本地兜底记录。管理员可在后台查看、导出、删除。</p>
+        </div>
+        <div class="card">
+          <h2>删除信息</h2>
+          <p>如需删除本人咨询信息，请联系管理员微信 <b>znm1108</b> 或 Telegram <b>@zleisheng</b>，并提供提交时的姓名和联系方式用于核对。</p>
+        </div>
+      </div>
+      <div class="warning" style="margin-top:14px">
+        我们不会出售你的个人信息。请不要在表单中提交身份证照片、护照照片、银行卡号、家庭住址等过度敏感信息；如后续确需提供，请只通过可信渠道单独沟通。
+      </div>
+    </div>
+  </section>
+
   <section id="apply" class="tab hide">
     <div class="card">
       <h2>免费海外工作咨询申请</h2>
@@ -333,15 +404,19 @@
           <label>备注</label><textarea id="aNote" placeholder="比如预算、出发时间、证书情况、家庭顾虑等"></textarea>
         </div>
       </div>
+      <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0">
+        <input id="aConsent" type="checkbox" style="width:auto;margin-top:4px">
+        <span>我已了解并同意：本平台仅提供信息整理、风险提示和求职资料服务；不承诺录用、不保证签证、不收押金。我的信息仅用于咨询沟通和服务跟进。</span>
+      </label>
       <button id="submitBtn" onclick="saveApply()">提交申请</button>
-      <p class="small">隐私提示：你的信息仅用于海外工作咨询初步沟通，不会在页面公开展示。平台不收押金，不保证录用和签证。</p>
+      <p class="small">隐私提示：你的信息仅用于海外工作咨询初步沟通，不会在页面公开展示。平台不收押金，不保证录用和签证。如需删除信息，请联系微信 znm1108。</p>
     </div>
   </section>
 
   <section id="admin" class="tab hide">
     <div id="adminLogin" class="card locked">
       <h2>管理员登录</h2>
-      <p class="small">后台入口已隐藏。默认密码：123456。正式推广前建议在代码里修改 <code>ADMIN_PASSWORD</code>。</p>
+      <p class="small">请输入管理员密码进入后台。</p>
       <label>后台密码</label>
       <input id="adminPass" type="password" placeholder="请输入后台密码"/>
       <button onclick="loginAdmin()">进入后台</button>
@@ -373,9 +448,13 @@
 </main>
 
 <footer>
-  出海工作资源助手 V2.4 · 变现入口版 / 资料服务 / 风险报告
+  出海工作资源助手 V2.5 · 合规强化版 / 隐私政策 / 风险提示
   <br>
-  <span class="admin-mini" onclick="openAdmin()">管理入口</span>
+  <span class="admin-mini" onclick="showTab('compliance')">合规说明</span>
+  &nbsp;|&nbsp;
+  <span class="admin-mini" onclick="showTab('privacy')">隐私政策</span>
+  &nbsp;|&nbsp;
+  <span class="admin-mini hide" onclick="openAdmin()">管理入口</span>
 </footer>
 
 <script>
@@ -538,7 +617,7 @@ function genResume(){
 function renderLatestJobs(){
   const box=document.getElementById("latestJobCards");
   if(!box) return;
-  box.innerHTML=LATEST_JOBS.map(j=>`<div class="info-item"><b>${j.country}｜${j.title}</b><span class="tag">${j.salary}</span><p>${j.req}</p><button onclick="quickApply('${j.country}','${j.title}')">咨询这个岗位</button></div>`).join("");
+  box.innerHTML=LATEST_JOBS.map(j=>`<div class="info-item"><b>${j.country}｜${j.title}</b><span class="tag">${j.salary}</span><p>${j.req}</p><p class="small">岗位方向示例，不代表真实招聘。</p><button onclick="quickApply('${j.country}','${j.title}')">咨询这个方向</button></div>`).join("");
 }
 function renderHomeGuides(){
   const box=document.getElementById("homeGuideCards");
@@ -555,7 +634,7 @@ function renderGuides(){
 
 function collectApply(){
   const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n证书情况：${aCertificate.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
-  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.4",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value,service_name:aService.value.trim()||"免费咨询",pay_status:aPayStatus.value};
+  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.5",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value,service_name:aService.value.trim()||"免费咨询",pay_status:aPayStatus.value};
 }
 
 function selectService(name, price){
@@ -566,7 +645,7 @@ function selectService(name, price){
   setTimeout(()=>document.getElementById("aName").scrollIntoView({behavior:"smooth"}),100);
 }
 async function saveApply(){
-  const item=collectApply(); if(!item.name||!item.contact){alert("请填写姓名和联系方式");return;}
+  const item=collectApply(); if(!item.name||!item.contact){alert("请填写姓名和联系方式");return;} if(!aConsent.checked){alert("请先勾选合规与隐私同意");return;}
   submitBtn.disabled=true; submitBtn.textContent="提交中...";
   try{
     if(cloudReady&&sb){const {error}=await sb.from(TABLE_NAME).insert([item]); if(error)throw error; alert("已提交成功，客服后台已收到。");}
@@ -577,7 +656,7 @@ async function saveApply(){
     alert("云端保存失败，已先保存到本机兜底记录。原因："+(e.message||e));
   }finally{
     submitBtn.disabled=false; submitBtn.textContent="提交申请";
-    ["aName","aContact","aAge","aCity","aCountry","aSkill","aSalary","aExp","aNote","aService"].forEach(id=>document.getElementById(id).value="");
+    ["aName","aContact","aAge","aCity","aCountry","aSkill","aSalary","aExp","aNote","aService"].forEach(id=>document.getElementById(id).value=""); aConsent.checked=false;
     updateStats();
   }
 }
@@ -671,19 +750,19 @@ async function deleteCloudApply(id){
 async function syncLocalToCloud(){
   if(!cloudReady||!sb){alert("Supabase 未配置，不能补传");return;}
   if(!localFallback.length){alert("没有本地兜底记录");return;}
-  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.4-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||"",service_name:x.service_name||"免费咨询",pay_status:x.pay_status||"未付款"}));
+  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.5-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||"",service_name:x.service_name||"免费咨询",pay_status:x.pay_status||"未付款"}));
   const {error}=await sb.from(TABLE_NAME).insert(rows);
   if(error){alert("补传失败："+error.message);return;}
   localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");alert("补传成功，本地兜底记录已清空");loadCloudApplies();
 }
 function clearLocalApplies(){if(confirm("确定清空本机兜底记录？不会删除云端数据。")){localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");if(!cloudReady){applies=[];renderApplies();}updateStats();}}
-function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.4"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
+function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.5"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
 function csvEscape(v){v=String(v??"");return '"'+v.replace(/"/g,'""').replace(/\n/g,' ')+'"';}
 function exportCSV(){
   const headers=["时间","姓名","联系方式","咨询服务","付款状态","年龄","所在地","护照","想去国家","工种技能","证书","工作经验","客户备注","跟进状态","客户标签","跟进备注","来源"];
   const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.service_name||"免费咨询",a.pay_status||"未付款",a.age,a.city,a.passport,a.country,a.skill,a.certificate||"",a.experience||a.exp,a.note,a.status||"未联系",a.customer_tag||"需跟进",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
   const csv="\ufeff"+[headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.4.csv";a.click();
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.5.csv";a.click();
 }
 
 initContacts();
