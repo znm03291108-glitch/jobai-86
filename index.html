@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出海工作资源助手 V2.6.1</title>
+  <title>出海工作资源助手 V2.6.2</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box}
@@ -79,7 +79,7 @@
 <body>
 <header>
   <div class="wrap">
-    <span class="badge">出海工作资源助手 V2.6.1 · 正式推广优化版</span>
+    <span class="badge">出海工作资源助手 V2.6.2 · 正式推广优化版</span>
     <h1>海外工作信息服务平台：岗位方向、国家指南、避坑知识、求职资料</h1>
     <p class="sub">面向焊工、电工、司机、厨师、机械维修、工程项目人员等，提供海外岗位信息整理、招聘风险识别、国家流程指南、求职资料生成和正规资源咨询。</p>
     <div id="cloudStatus" class="status">云端状态：检测中...</div>
@@ -471,7 +471,7 @@
 </main>
 
 <footer>
-  出海工作资源助手 V2.6.1 · 文章阅读修正版 / 避坑文章 / 转化入口
+  出海工作资源助手 V2.6.2 · 阅读全文最终修正版 / 避坑文章 / 转化入口
   <br>
   <span class="admin-mini" onclick="showTab('compliance')">合规说明</span>
   &nbsp;|&nbsp;
@@ -742,19 +742,19 @@ function genResume(){
 function renderHomeArticles(){
   const box=document.getElementById("homeArticleCards");
   if(!box) return;
-  box.innerHTML=ARTICLES.slice(0,3).map((a,i)=>`<div class="mini-card"><h3>${a.title}</h3><span class="tag">${a.tag}</span><p>${a.summary}</p><button onclick="openArticle(${i})">阅读全文</button></div>`).join("");
+  box.innerHTML=ARTICLES.slice(0,3).map((a,i)=>`<div class="mini-card"><h3>${a.title}</h3><span class="tag">${a.tag}</span><p>${a.summary}</p><button type="button" onclick="event.stopPropagation();openArticle(${i})">阅读全文</button></div>`).join("");
 }
 function renderArticles(){
   const box=document.getElementById("articleList");
   if(!box) return;
-  box.innerHTML=ARTICLES.map((a,i)=>`<div class="card"><h2 class="article-title">${a.title}</h2><div class="article-meta">栏目：${a.tag}｜适合转发引流</div><p>${a.summary}</p><button onclick="openArticle(${i})">阅读全文</button></div>`).join("");
+  box.innerHTML=ARTICLES.map((a,i)=>`<div class="card" onclick="openArticle(${i})"><h2 class="article-title">${a.title}</h2><div class="article-meta">栏目：${a.tag}｜适合转发引流</div><p>${a.summary}</p><button type="button" onclick="event.stopPropagation();openArticle(${i})">阅读全文</button></div>`).join("");
 }
 function openArticle(i){
+  showTab("articles");
   const a=ARTICLES[i];
   const box=document.getElementById("articleList");
   if(!box){alert("文章容器未加载，请刷新页面后再试");return;}
   box.innerHTML=`<div class="card" style="grid-column:1/-1"><h2>${a.title}</h2><div class="article-meta">栏目：${a.tag}</div><div class="article-body">${a.body.map(p=>`<p>${p}</p>`).join("")}<h3>咨询前检查清单</h3><ul>${a.checklist.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="article-cta"><button onclick="showTab('risk')">做防骗检测</button><button class="green" onclick="showTab('apply')">免费咨询</button><button class="secondary" onclick="showTab('services')">查看付费资料服务</button><button class="secondary" onclick="renderArticles()">返回文章列表</button></div><div class="warning" style="margin-top:12px">本文仅用于信息整理和风险提示，不构成招聘承诺、签证承诺或法律意见。正式申请前请自行核实雇主、合同、签证、费用和资质。</div></div>`;
-  showTab("articles");
   setTimeout(()=>box.scrollIntoView({behavior:"smooth",block:"start"}),80);
 }
 function renderLatestJobs(){
@@ -777,7 +777,7 @@ function renderGuides(){
 
 function collectApply(){
   const expFull = `工作经验：${aExp.value.trim()}\n语言能力：${aLanguage.value}\n证书情况：${aCertificate.value}\n期望工资：${aSalary.value.trim()}\n接受场景：${aAcceptSite.value}`;
-  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.6.1",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value,service_name:aService.value.trim()||"免费咨询",pay_status:aPayStatus.value};
+  return {name:aName.value.trim(),contact:aContact.value.trim(),age:aAge.value.trim(),city:aCity.value.trim(),passport:aPassport.value,country:aCountry.value.trim(),skill:aSkill.value.trim(),experience:expFull,note:aNote.value.trim(),source:"web-v2.6.2",status:"未联系",admin_note:"",customer_tag:"需跟进",certificate:aCertificate.value,service_name:aService.value.trim()||"免费咨询",pay_status:aPayStatus.value};
 }
 
 function selectService(name, price){
@@ -893,19 +893,19 @@ async function deleteCloudApply(id){
 async function syncLocalToCloud(){
   if(!cloudReady||!sb){alert("Supabase 未配置，不能补传");return;}
   if(!localFallback.length){alert("没有本地兜底记录");return;}
-  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.6.1-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||"",service_name:x.service_name||"免费咨询",pay_status:x.pay_status||"未付款"}));
+  const rows=localFallback.map(x=>({name:x.name,contact:x.contact,age:x.age,city:x.city,passport:x.passport,country:x.country,skill:x.skill,experience:x.experience||x.exp,note:x.note,source:"web-v2.6.2-local-sync",status:x.status||"未联系",admin_note:x.admin_note||"",customer_tag:x.customer_tag||"需跟进",certificate:x.certificate||"",service_name:x.service_name||"免费咨询",pay_status:x.pay_status||"未付款"}));
   const {error}=await sb.from(TABLE_NAME).insert(rows);
   if(error){alert("补传失败："+error.message);return;}
   localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");alert("补传成功，本地兜底记录已清空");loadCloudApplies();
 }
 function clearLocalApplies(){if(confirm("确定清空本机兜底记录？不会删除云端数据。")){localFallback=[];localStorage.setItem("ow_v21_local_fallback","[]");if(!cloudReady){applies=[];renderApplies();}updateStats();}}
-function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.6.1"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
+function exportData(){const data={applies,localFallback,riskCount,exportedAt:new Date().toISOString(),version:"overseas-work-assistant-v2.6.2"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="出海工作资源助手V2.1数据.json";a.click();}
 function csvEscape(v){v=String(v??"");return '"'+v.replace(/"/g,'""').replace(/\n/g,' ')+'"';}
 function exportCSV(){
   const headers=["时间","姓名","联系方式","咨询服务","付款状态","年龄","所在地","护照","想去国家","工种技能","证书","工作经验","客户备注","跟进状态","客户标签","跟进备注","来源"];
   const rows=applies.map(a=>[fmtTime(a.created_at),a.name,a.contact,a.service_name||"免费咨询",a.pay_status||"未付款",a.age,a.city,a.passport,a.country,a.skill,a.certificate||"",a.experience||a.exp,a.note,a.status||"未联系",a.customer_tag||"需跟进",a.admin_note||"",a.local_only?"本地兜底":"云端"]);
   const csv="\ufeff"+[headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.6.1.csv";a.click();
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="咨询申请记录V2.6.2.csv";a.click();
 }
 
 initContacts();
